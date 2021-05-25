@@ -8,5 +8,5 @@ setup(
     author='Gabriel Ferrer',
     author_email='ferrer@hendrix.edu',
     license='Public Domain',
-    packages=['sparc']
+    packages=['SPARC_lib']
 )
