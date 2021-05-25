@@ -1,0 +1,12 @@
+from setuptools import setup
+
+setup(
+    name='SPARC_lib',
+    version='0.1.0',
+    description='Tools supporting the SPARC project at Hendrix',
+    url='https://github.com/gjf2a/SPARC_lib',
+    author='Gabriel Ferrer',
+    author_email='ferrer@hendrix.edu',
+    license='Public Domain',
+    packages=['sparc']
+)
