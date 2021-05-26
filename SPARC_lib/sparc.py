@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 import unittest
 import openpyxl
@@ -35,6 +37,13 @@ def dollars2float(dollars: str) -> float:
 def unzip(tuple_values):
     # From https://appdividend.com/2020/10/19/how-to-unzip-list-of-tuples-in-python/#:~:text=%20How%20to%20Unzip%20List%20of%20Tuples%20in,zip...%204%202%3A%20Using%20List%20Comprehension%20More%20
     return tuple(zip(*tuple_values))
+
+
+def make_markdown_table(headers: List[str], data: List) -> str:
+    s = f"| {' | '.join(headers)} |\n| {' | '.join([(len(header) - 1) * '-' + ':' for header in headers])} |\n"
+    for row in data:
+        s += f"| {' | '.join([str(item) for item in row])} |\n"
+    return s
 
 
 @total_ordering
@@ -82,3 +91,11 @@ class Tests(unittest.TestCase):
         nums = [x for x in range(100)]
         self.assertEqual(conditional_probability(lambda x: x % 2 == 1, lambda x: x > 10, nums), Ratio(45, 50))
 
+    def test_make_markdown(self):
+        table = make_markdown_table(["Alpha", "Beta", "Gamma"], [(1, 2, 3), (3, 6, 9)])
+        target = """| Alpha | Beta | Gamma |
+| ----: | ---: | ----: |
+| 1 | 2 | 3 |
+| 3 | 6 | 9 |
+"""
+        self.assertEqual(table, target)
