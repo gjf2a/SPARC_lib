@@ -9,5 +9,6 @@ setup(
     url='https://github.com/gjf2a/SPARC_lib',
     author='Gabriel Ferrer',
     author_email='ferrer@hendrix.edu',
-    license='Public Domain'
+    license='Public Domain',
+    packages=['SPARC_lib']
 )
