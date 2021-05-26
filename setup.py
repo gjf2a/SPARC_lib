@@ -1,3 +1,5 @@
+# Notes on setup: https://betterscientificsoftware.github.io/python-for-hpc/tutorials/python-pypi-packaging/
+
 from setuptools import setup
 
 setup(

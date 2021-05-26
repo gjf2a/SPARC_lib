@@ -1,4 +1,5 @@
 import pandas as pd
+import unittest
 import openpyxl
 
 enrollment_map_fields = ('1st Sem', '2nd Sem', '3rd Sem', '4th Sem', '5th Sem', '6th Sem', '7th Sem', '8th Sem', 'Grad in 4', 'Grad in 5', 'Grad in 6')
@@ -22,3 +23,10 @@ def map_depth_for(row):
     return best
 
 
+def dollars2float(dollars: str) -> float:
+    return float(dollars[1:].replace(",", ""))
+
+
+class Tests(unittest.TestCase):
+    def test_dollars(self):
+        self.assertEqual(12345.6, dollars2float("$12345.60"))
