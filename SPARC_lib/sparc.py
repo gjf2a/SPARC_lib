@@ -17,7 +17,6 @@ def enrollment_map_depths(filename):
 def map_depth_for(row):
     best = 0
     for i, field in enumerate(enrollment_map_fields):
-        print(field, row[field])
         if row[field] == '1':
             best = i + 1
     return best
