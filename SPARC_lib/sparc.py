@@ -1,6 +1,7 @@
 import pandas as pd
 import unittest
 import openpyxl
+from functools import total_ordering
 
 
 def enrollment_map_depths(filename):
@@ -36,9 +37,48 @@ def unzip(tuple_values):
     return tuple(zip(*tuple_values))
 
 
+@total_ordering
+class Ratio:
+    def __init__(self, numerator, denominator):
+        self.numerator = numerator
+        self.denominator = denominator
+
+    def __repr__(self):
+        return f'Ratio({self.numerator}, {self.denominator})'
+
+    def __float__(self):
+        return self.numerator / self.denominator
+
+    def __lt__(self, other):
+        return float(self) < float(other)
+
+    def __eq__(self, other):
+        return float(self) == float(other)
+
+    def percent(self):
+        return f'{self.numerator}/{self.denominator} ({format(float(self) * 100, ".2f")}%)'
+
+
+def conditional_probability(prior_condition, posterior_condition, data):
+    yes = 0
+    no = 0
+    for record in data:
+        if prior_condition(record):
+            if posterior_condition(record):
+                yes += 1
+            else:
+                no += 1
+    return Ratio(yes, yes + no)
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
 
     def test_unzip(self):
         self.assertEqual((('Moe', 'Larry', 'Curly'), (1, 2, 3)), unzip([('Moe', 1), ('Larry', 2), ('Curly', 3)]))
+
+    def test_cond_prob(self):
+        nums = [x for x in range(100)]
+        self.assertEqual(conditional_probability(lambda x: x % 2 == 1, lambda x: x > 10, nums), Ratio(45, 50))
+
