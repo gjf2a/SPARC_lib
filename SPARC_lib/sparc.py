@@ -26,6 +26,14 @@ def dollars2float(dollars: str) -> float:
     return float(dollars[1:].replace(",", ""))
 
 
+def unzip(tuple_values):
+    # From https://appdividend.com/2020/10/19/how-to-unzip-list-of-tuples-in-python/#:~:text=%20How%20to%20Unzip%20List%20of%20Tuples%20in,zip...%204%202%3A%20Using%20List%20Comprehension%20More%20
+    return tuple(zip(*tuple_values))
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
+
+    def test_unzip(self):
+        self.assertEqual((('Moe', 'Larry', 'Curly'), (1, 2, 3)), unzip([('Moe', 1), ('Larry', 2), ('Curly', 3)]))
