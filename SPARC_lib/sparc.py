@@ -67,6 +67,9 @@ class Ratio:
     def percent(self):
         return f'{self.numerator}/{self.denominator} ({format(float(self) * 100, ".2f")}%)'
 
+    def defined(self):
+        return self.denominator != 0
+
 
 def conditional_probability(prior_condition, posterior_condition, data):
     yes = 0
