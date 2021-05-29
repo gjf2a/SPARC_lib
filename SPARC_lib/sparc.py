@@ -20,12 +20,12 @@ def map_depth_for(row):
     grad_fields = ('Grad in 4', 'Grad in 5', 'Grad in 6')
 
     for i, field in enumerate(grad_fields):
-        if row[field] == '1':
+        if row[field] in ('I', '1'):
             return i + 9
 
     best = 0
     for i, field in enumerate(sem_fields):
-        if row[field] == '1':
+        if row[field] in ('I', '1'):
             best = i + 1
     return best
 
