@@ -83,6 +83,18 @@ def conditional_probability(prior_condition, posterior_condition, data):
     return Ratio(yes, yes + no)
 
 
+def matching_records(prior_condition, posterior_condition, data):
+    yes = []
+    no = []
+    for record in data:
+        if prior_condition(record):
+            if posterior_condition(record):
+                yes.append(record)
+            else:
+                no.append(record)
+    return yes, no
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
