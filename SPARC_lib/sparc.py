@@ -56,7 +56,10 @@ class Ratio:
         return f'Ratio({self.numerator}, {self.denominator})'
 
     def __float__(self):
-        return self.numerator / self.denominator
+        if self.denominator == 0:
+            return None
+        else:
+            return self.numerator / self.denominator
 
     def __lt__(self, other):
         return float(self) < float(other)
