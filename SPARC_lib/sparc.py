@@ -46,6 +46,10 @@ def make_markdown_table(headers: List[str], data: List) -> str:
     return s
 
 
+def grade2points(grade):
+    return max(0.0, 4.0 - (ord(grade.upper()) - ord('A')))
+
+
 @total_ordering
 class Ratio:
     def __init__(self, numerator, denominator):
@@ -134,3 +138,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(rep[27], 'a')
         self.assertEqual(rep[28], 'b')
         self.assertEqual(rep[29], 'c')
+
+    def test_grade_pts(self):
+        for (g, p) in [('A', 4.0), ('B', 3.0), ('C', 2.0), ('D', 1.0), ('F', 0.0)]:
+            self.assertEqual(p, grade2points(g))
