@@ -95,6 +95,16 @@ def matching_records(prior_condition, posterior_condition, data):
     return yes, no
 
 
+class InfiniteRepeatingList:
+    def __init__(self, values2repeat):
+        self.values = values2repeat[:]
+
+    def __getitem__(self, key):
+        while key >= len(self.values):
+            self.values *= 2
+        return self.values[key]
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
@@ -114,3 +124,15 @@ class Tests(unittest.TestCase):
 | 3 | 6 | 9 |
 """
         self.assertEqual(table, target)
+
+    def test_repeating_list(self):
+        rep = InfiniteRepeatingList(['a', 'b', 'c'])
+        self.assertEqual(rep[0], 'a')
+        self.assertEqual(rep[1], 'b')
+        self.assertEqual(rep[2], 'c')
+        self.assertEqual(rep[3], 'a')
+        self.assertEqual(rep[4], 'b')
+        self.assertEqual(rep[5], 'c')
+        self.assertEqual(rep[27], 'a')
+        self.assertEqual(rep[28], 'b')
+        self.assertEqual(rep[29], 'c')
