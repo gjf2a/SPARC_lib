@@ -100,9 +100,7 @@ class InfiniteRepeatingList:
         self.values = values2repeat[:]
 
     def __getitem__(self, key):
-        while key >= len(self.values):
-            self.values *= 2
-        return self.values[key]
+        return self.values[key % len(self.values)]
 
 
 class Tests(unittest.TestCase):
