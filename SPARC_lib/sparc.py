@@ -39,6 +39,10 @@ def unzip(tuple_values):
     return tuple(zip(*tuple_values))
 
 
+def intervals_from(xs):
+    return zip(xs, xs[1:] + [None])
+
+
 def make_markdown_table(headers: List[str], data: List) -> str:
     s = f"| {' | '.join(headers)} |\n| {' | '.join([(len(header) - 1) * '-' + ':' for header in headers])} |\n"
     for row in data:
@@ -142,3 +146,6 @@ class Tests(unittest.TestCase):
     def test_grade_pts(self):
         for (g, p) in [('A', 4.0), ('B', 3.0), ('C', 2.0), ('D', 1.0), ('F', 0.0)]:
             self.assertEqual(p, grade2points(g))
+
+    def test_intervals(self):
+        self.assertEqual([(1, 3), (3, 5), (5, 7), (7, None)], list(intervals_from([1, 3, 5, 7])))
