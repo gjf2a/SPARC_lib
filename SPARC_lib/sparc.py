@@ -43,12 +43,6 @@ def enrollment_map_depths(filename):
 
 def map_depth_for(row):
     sem_fields = ('1st Sem', '2nd Sem', '3rd Sem', '4th Sem', '5th Sem', '6th Sem', '7th Sem', '8th Sem')
-    grad_fields = ('Grad in 4', 'Grad in 5', 'Grad in 6')
-
-    for i, field in enumerate(grad_fields):
-        if row[field] in ('I', '1'):
-            return i + 9
-
     best = 0
     for i, field in enumerate(sem_fields):
         if row[field] in ('I', '1'):
