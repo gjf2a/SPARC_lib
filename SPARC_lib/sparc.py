@@ -102,6 +102,12 @@ class Ratio:
     def defined(self):
         return self.denominator != 0
 
+    def count(self, prior, posterior):
+        if prior:
+            self.denominator += 1
+            if posterior:
+                self.numerator += 1
+
     def observe(self, prior_condition, posterior_condition, record):
         if prior_condition(record):
             self.denominator += 1
@@ -142,6 +148,12 @@ class Tests(unittest.TestCase):
 
     def test_unzip(self):
         self.assertEqual((('Moe', 'Larry', 'Curly'), (1, 2, 3)), unzip([('Moe', 1), ('Larry', 2), ('Curly', 3)]))
+
+    def test_count(self):
+        r = Ratio()
+        for i in range(100):
+            r.count(i % 2 == 0, i % 3 == 0)
+        self.assertEqual(r, Ratio(17, 50))
 
     def test_cond_prob(self):
         nums = [x for x in range(100)]
