@@ -80,7 +80,7 @@ def grade2points(grade):
 
 @total_ordering
 class Ratio:
-    def __init__(self, numerator, denominator):
+    def __init__(self, numerator=0, denominator=0):
         self.numerator = numerator
         self.denominator = denominator
 
@@ -102,17 +102,18 @@ class Ratio:
     def defined(self):
         return self.denominator != 0
 
+    def observe(self, prior_condition, posterior_condition, record):
+        if prior_condition(record):
+            self.denominator += 1
+            if posterior_condition(record):
+                self.numerator += 1
+
 
 def conditional_probability(prior_condition, posterior_condition, data):
-    yes = 0
-    no = 0
+    r = Ratio()
     for record in data:
-        if prior_condition(record):
-            if posterior_condition(record):
-                yes += 1
-            else:
-                no += 1
-    return Ratio(yes, yes + no)
+        r.observe(prior_condition, posterior_condition, record)
+    return r
 
 
 def matching_records(prior_condition, posterior_condition, data):
