@@ -2,7 +2,7 @@ from typing import List
 
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+from matplotlib import pyplot as plt
 import unittest
 import openpyxl
 from functools import total_ordering
