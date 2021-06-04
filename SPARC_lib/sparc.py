@@ -43,6 +43,10 @@ def intervals_from(xs):
     return zip(xs, xs[1:] + [None])
 
 
+def in_interval(value, x, x_next):
+    return value >= x and (x_next is None or x_next > value)
+
+
 def make_markdown_table(headers: List[str], data: List) -> str:
     s = f"| {' | '.join(headers)} |\n| {' | '.join([(len(header) - 1) * '-' + ':' for header in headers])} |\n"
     for row in data:
@@ -148,4 +152,8 @@ class Tests(unittest.TestCase):
             self.assertEqual(p, grade2points(g))
 
     def test_intervals(self):
-        self.assertEqual([(1, 3), (3, 5), (5, 7), (7, None)], list(intervals_from([1, 3, 5, 7])))
+        intervals = list(intervals_from([1, 3, 5, 7]))
+        self.assertEqual([(1, 3), (3, 5), (5, 7), (7, None)], intervals)
+        for test in ((((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
+            for outcome in test[0]:
+                self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
