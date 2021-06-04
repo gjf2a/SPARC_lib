@@ -1,9 +1,24 @@
 from typing import List
 
 import pandas as pd
+import numpy as np
+import matplotlib as plt
 import unittest
 import openpyxl
 from functools import total_ordering
+
+
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors=['blue'], width=0.1, figsize=(10, 8), dpi=100):
+    colors = InfiniteRepeatingList(colors)
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    X = np.arange(len(x_labels))
+    for i in range(len(nested_data)):
+        ax.bar(X + i * width, nested_data[i], color = colors[i], width = width, label=bar_labels[i])
+    plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
+    plt.legend(loc="upper left")
 
 
 def enrollment_map_depths(filename):
