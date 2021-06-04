@@ -115,6 +115,13 @@ class Ratio:
                 self.numerator += 1
 
 
+# Ratios are intended to represent observations. Consequently, summing them isn't a matter
+# of finding common denominators and adding; we instead sum the denominators and numerators
+# to produce an overall ratio.
+def observation_sum(ratios: List[Ratio]) -> Ratio:
+    return Ratio(sum([r.numerator for r in ratios]), sum([r.denominator for r in ratios]))
+
+
 def conditional_probability(prior_condition, posterior_condition, data):
     r = Ratio()
     for record in data:
@@ -154,6 +161,10 @@ class Tests(unittest.TestCase):
         for i in range(100):
             r.count(i % 2 == 0, i % 3 == 0)
         self.assertEqual(r, Ratio(17, 50))
+
+    def test_obs_sum(self):
+        ratios = [Ratio(1, 3), Ratio(2, 4), Ratio(4, 5)]
+        self.assertEqual(observation_sum(ratios), Ratio(7, 12))
 
     def test_cond_prob(self):
         nums = [x for x in range(100)]
