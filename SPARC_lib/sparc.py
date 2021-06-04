@@ -28,6 +28,10 @@ def make_interval_label(value_list, i):
         return f"{value_list[i]}-{value_list[i+1]}"
 
 
+def make_interval_label_list(value_list):
+    return [make_interval_label(value_list, i) for i in range(len(value_list))]
+
+
 def enrollment_map_depths(filename):
     depths = {}
     data = pd.read_excel(filename, dtype=str)
