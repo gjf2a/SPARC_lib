@@ -21,6 +21,13 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors
     plt.legend(loc="upper left")
 
 
+def make_interval_label(value_list, i):
+    if i + 1 == len(value_list):
+        return f"{value_list[i]}+"
+    else:
+        return f"{value_list[i]}-{value_list[i+1]}"
+
+
 def enrollment_map_depths(filename):
     depths = {}
     data = pd.read_excel(filename, dtype=str)
