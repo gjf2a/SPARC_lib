@@ -163,7 +163,10 @@ class Course:
 
 def course_info(code: str, title: str, grade: str, yr_term: str) -> Course:
     if type(code) == str:
-        discipline, number, section = code.split()
+        code_parts = code.split()
+        if len(code_parts) == 2:
+            code_parts.append('')
+        discipline, number, section = code_parts
         year, term = yr_term.split("_")
         return Course(discipline, number, section, title, grade, int(year), term)
 
@@ -224,3 +227,5 @@ class Tests(unittest.TestCase):
     def test_course(self):
         c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A", "2019_2S")
         self.assertEqual(c1, Course("ENGL", '234', '04', "Creative Nonfiction - The Essay", "A", 2019, "2S"))
+        c2 = course_info('MATH 130', 'Calculus I', 'CR', '2014_2S')
+        self.assertEqual(c2, Course("MATH", '130', '', 'Calculus I', 'CR', 2014, '2S'))
