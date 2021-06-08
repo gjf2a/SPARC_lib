@@ -162,9 +162,10 @@ class Course:
 
 
 def course_info(code: str, title: str, grade: str, yr_term: str) -> Course:
-    discipline, number, section = code.split()
-    year, term = yr_term.split("_")
-    return Course(discipline, int(number), int(section), title, grade, int(year), term)
+    if type(code) == str:
+        discipline, number, section = code.split()
+        year, term = yr_term.split("_")
+        return Course(discipline, int(number), int(section), title, grade, int(year), term)
 
 
 class Tests(unittest.TestCase):
