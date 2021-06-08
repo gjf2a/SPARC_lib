@@ -153,8 +153,8 @@ class InfiniteRepeatingList:
 @dataclass
 class Course:
     discipline: str
-    number: int
-    section: int
+    number: str
+    section: str
     title: str
     grade: str
     year: int
@@ -165,7 +165,7 @@ def course_info(code: str, title: str, grade: str, yr_term: str) -> Course:
     if type(code) == str:
         discipline, number, section = code.split()
         year, term = yr_term.split("_")
-        return Course(discipline, int(number), int(section), title, grade, int(year), term)
+        return Course(discipline, number, section, title, grade, int(year), term)
 
 
 class Tests(unittest.TestCase):
@@ -223,4 +223,4 @@ class Tests(unittest.TestCase):
 
     def test_course(self):
         c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A", "2019_2S")
-        self.assertEqual(c1, Course("ENGL", 234, 4, "Creative Nonfiction - The Essay", "A", 2019, "2S"))
+        self.assertEqual(c1, Course("ENGL", '234', '04', "Creative Nonfiction - The Essay", "A", 2019, "2S"))
