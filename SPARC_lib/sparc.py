@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 import pandas as pd
@@ -149,6 +150,20 @@ class InfiniteRepeatingList:
         return self.values[key % len(self.values)]
 
 
+@dataclass
+class Course:
+    discipline: str
+    number: int
+    section: int
+    title: str
+    grade: str
+
+
+def course_info(code: str, title: str, grade: str) -> Course:
+    discipline, number, section = code.split()
+    return Course(discipline, int(number), int(section), title, grade)
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
@@ -201,3 +216,7 @@ class Tests(unittest.TestCase):
         for test in ((((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
             for outcome in test[0]:
                 self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
+
+    def test_course(self):
+        c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A")
+        self.assertEqual(c1, Course("ENGL", 234, 4, "Creative Nonfiction - The Essay", "A"))
