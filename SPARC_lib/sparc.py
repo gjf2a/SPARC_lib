@@ -157,11 +157,14 @@ class Course:
     section: int
     title: str
     grade: str
+    year: int
+    term: str
 
 
-def course_info(code: str, title: str, grade: str) -> Course:
+def course_info(code: str, title: str, grade: str, yr_term) -> Course:
     discipline, number, section = code.split()
-    return Course(discipline, int(number), int(section), title, grade)
+    year, term = yr_term.split("_")
+    return Course(discipline, int(number), int(section), title, grade, int(year), term)
 
 
 class Tests(unittest.TestCase):
@@ -218,5 +221,5 @@ class Tests(unittest.TestCase):
                 self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
 
     def test_course(self):
-        c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A")
-        self.assertEqual(c1, Course("ENGL", 234, 4, "Creative Nonfiction - The Essay", "A"))
+        c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A", "2019_2S")
+        self.assertEqual(c1, Course("ENGL", 234, 4, "Creative Nonfiction - The Essay", "A", 2019, "2S"))
