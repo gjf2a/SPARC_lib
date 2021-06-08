@@ -161,7 +161,7 @@ class Course:
     term: str
 
 
-def course_info(code: str, title: str, grade: str, yr_term) -> Course:
+def course_info(code: str, title: str, grade: str, yr_term: str) -> Course:
     discipline, number, section = code.split()
     year, term = yr_term.split("_")
     return Course(discipline, int(number), int(section), title, grade, int(year), term)
