@@ -9,7 +9,8 @@ import openpyxl
 from functools import total_ordering
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors=['blue'], width=0.1, figsize=(10, 8), dpi=100):
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
+    if colors is None: colors = ['blue']
     colors = InfiniteRepeatingList(colors)
     fig = plt.figure(figsize=figsize, dpi=dpi)
     ax = fig.add_axes([0, 0, 1, 1])
