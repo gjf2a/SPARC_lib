@@ -23,6 +23,9 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors
     plt.legend(loc="upper left")
 
 
+#def make_nested_data(data_set, )
+
+
 def make_interval_label(value_list, i):
     if i + 1 == len(value_list):
         return f"{value_list[i]}+"
@@ -143,6 +146,17 @@ def matching_records(prior_condition, posterior_condition, data):
     return yes, no
 
 
+def find_biggest_jump(ratio_list: List[Ratio]) -> int:
+    biggest = 0
+    biggest_size = 0.0
+    for i in range(1, len(ratio_list)):
+        size = abs(float(ratio_list[i]) - float(ratio_list[i-1]))
+        if size > biggest_size:
+            biggest = i
+            biggest_size = size
+    return biggest
+
+
 class InfiniteRepeatingList:
     def __init__(self, values2repeat):
         self.values = values2repeat[:]
@@ -230,3 +244,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(c1, Course("ENGL", '234', '04', "Creative Nonfiction - The Essay", "A", 2019, "2S"))
         c2 = course_info('MATH 130', 'Calculus I', 'CR', '2014_2S')
         self.assertEqual(c2, Course("MATH", '130', '', 'Calculus I', 'CR', 2014, '2S'))
+
+    def test_biggest_jump(self):
+        tests = [[Ratio(3, 5), Ratio(7, 7), Ratio(8, 8), Ratio(13, 13), Ratio(21, 21)],
+                 [Ratio(19, 30), Ratio(24, 25), Ratio(44, 45), Ratio(79, 80), Ratio(129, 132)],
+                 [Ratio(9, 12), Ratio(20, 23), Ratio(31, 34), Ratio(68, 71), Ratio(112, 116)],
+                 [Ratio(3, 5), Ratio(17, 17), Ratio(20, 21), Ratio(27, 27), Ratio(47, 47)],
+                 [Ratio(4, 5), Ratio(7, 9), Ratio(6, 6), Ratio(10, 11), Ratio(20, 20)]]
+        answers = [1, 1, 1, 1, 2]
+        for i in range(len(tests)):
+            self.assertEqual(answers[i], find_biggest_jump(tests[i]))
