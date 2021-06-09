@@ -150,10 +150,14 @@ def find_biggest_jump(ratio_list: List[Ratio]) -> int:
     biggest = 0
     biggest_size = 0.0
     for i in range(1, len(ratio_list)):
-        size = abs(float(ratio_list[i]) - float(ratio_list[i-1]))
-        if size > biggest_size:
-            biggest = i
-            biggest_size = size
+        if not ratio_list[i-1].defined():
+            if ratio_list[i].defined():
+                return i
+        elif ratio_list[i].defined():
+            size = abs(float(ratio_list[i]) - float(ratio_list[i-1]))
+            if size > biggest_size:
+                biggest = i
+                biggest_size = size
     return biggest
 
 
@@ -254,3 +258,5 @@ class Tests(unittest.TestCase):
         answers = [1, 1, 1, 1, 2]
         for i in range(len(tests)):
             self.assertEqual(answers[i], find_biggest_jump(tests[i]))
+
+        self.assertEqual(1, find_biggest_jump([Ratio(0, 0), Ratio(1, 2), Ratio(3, 3)]))
