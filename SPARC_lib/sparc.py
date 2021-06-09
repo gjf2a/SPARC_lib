@@ -112,7 +112,7 @@ class Ratio:
         return float(self) == float(other)
 
     def percent(self):
-        return f'{self.numerator}/{self.denominator} ({format(float(self) * 100, ".2f")}%)'
+        return f'{self.numerator}/{self.denominator} ({format(float(self) * 100, ".2f") + "%" if self.defined() else "Undefined"})'
 
     def defined(self):
         return self.denominator != 0
@@ -270,6 +270,11 @@ class Tests(unittest.TestCase):
             self.assertEqual(answers[i], find_biggest_jump(tests[i]))
 
         self.assertEqual(1, find_biggest_jump([Ratio(0, 0), Ratio(1, 2), Ratio(3, 3)]))
+
+    def test_percent(self):
+        ratios = [(Ratio(1, 10), '1/10 (10.00%)'), (Ratio(2, 3), '2/3 (66.67%)'), (Ratio(0, 0), '0/0 (Undefined)')]
+        for ratio, output in ratios:
+            self.assertEqual(output, ratio.percent())
 
     def test_grouped_markdown(self):
         data = [[Ratio(3, 5), Ratio(7, 7), Ratio(8, 8), Ratio(13, 13), Ratio(21, 21)],
