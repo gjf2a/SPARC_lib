@@ -9,7 +9,7 @@ import openpyxl
 from functools import total_ordering
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
     if colors is None:
         colors = ['blue']
     colors = InfiniteRepeatingList(colors)
@@ -21,7 +21,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors
     for i in range(len(nested_data)):
         ax.bar(X + i * width, nested_data[i], color = colors[i], width = width, label=bar_labels[i])
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
-    plt.legend(loc="upper left")
+    plt.legend(loc="upper left", label=bar_label)
 
 
 def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d):
