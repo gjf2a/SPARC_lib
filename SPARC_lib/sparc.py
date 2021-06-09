@@ -24,7 +24,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors
     plt.legend(loc="upper left")
     table_data = nested_data[:]
     for i in range(len(table_data)):
-        table_data[i] = bar_labels[i] + table_data[i]
+        table_data[i] = [bar_labels[i]] + table_data[i]
     return make_markdown_table([y_label] + [f"{x_label}: " + x_labels[0]] + x_labels[1:], nested_data)
 
 #def make_nested_data(data_set, )
