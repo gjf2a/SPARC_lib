@@ -10,7 +10,8 @@ from functools import total_ordering
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
-    if colors is None: colors = ['blue']
+    if colors is None:
+        colors = ['blue']
     colors = InfiniteRepeatingList(colors)
     fig = plt.figure(figsize=figsize, dpi=dpi)
     ax = fig.add_axes([0, 0, 1, 1])
@@ -21,7 +22,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_labels, colors
         ax.bar(X + i * width, nested_data[i], color = colors[i], width = width, label=bar_labels[i])
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
     plt.legend(loc="upper left")
-
+    return make_markdown_table([x_label] + [bar_labels[0] + f"({y_label})"] + bar_labels[1:], [nested_data])
 
 #def make_nested_data(data_set, )
 
