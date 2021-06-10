@@ -16,11 +16,13 @@ def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
                                        lambda n: y_test(n), data)
                for (x, x_next) in x_labels]
               for (group, group_next) in bar_labels]
-    return make_interval_label_list(x_labels), make_interval_label_list(bar_labels), ratios
+    return ratios
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
-    x_labels, bar_labels, ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
+    ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
+    x_labels = make_interval_label_list(xs)
+    bar_labels = make_interval_label_list(bars)
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
     grouped_bar_plot(probs, x_label, y_label, x_labels, bar_label, bar_labels, colors, width, figsize)
     return grouped_markdown_table(ratios, x_label, y_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
