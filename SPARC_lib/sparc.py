@@ -10,8 +10,8 @@ from functools import total_ordering
 
 
 def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
-    x_labels = intervals_from(xs)
-    bar_labels = intervals_from(bars)
+    x_labels = list(intervals_from(xs))
+    bar_labels = list(intervals_from(bars))
     ratios = [[conditional_probability(lambda n: in_interval(x_getter(n), x, x_next) and in_interval(bar_getter(n), group, group_next),
                                        lambda n: y_test(n), data)
                for (x, x_next) in x_labels]
@@ -21,7 +21,7 @@ def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
     x_labels, bar_labels, ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
-    probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in data]
+    probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
     grouped_bar_plot(probs, x_label, y_label, x_labels, bar_label, bar_labels, colors, width, figsize)
     return grouped_markdown_table(ratios, x_label, y_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
