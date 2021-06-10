@@ -13,7 +13,7 @@ def two_condition_counts(data, xs, x_cond, bars, bar_cond):
     return [[len([n for n in data if x_cond(n, x, bar) and bar_cond(n, x, bar)]) for x in xs] for bar in bars]
 
 
-def two_condition_plot(data, x_label, xs, x_cond, bar_label, bars, bar_cond, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(10, 8), dpi=100):
+def two_condition_plot(data, x_label, xs, x_cond, bar_label, bars, bar_cond, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
     counts = two_condition_counts(data, xs, x_cond, bars, bar_cond)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label, [bar_labeler(bar) for bar in bars], colors, width, figsize)
 
@@ -35,7 +35,7 @@ def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, pos
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
 
-def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
+def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(6, 4), dpi=100):
     return conditional_plot(data, x_label, intervals_from(xs),
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
                             bar_label, intervals_from(bars),
@@ -43,7 +43,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, lambda x: make_range_label(x[0], x[1]), lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(6, 4), dpi=100):
     if colors is None:
         colors = ['blue']
     colors = InfiniteRepeatingList(colors)
