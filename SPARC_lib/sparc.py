@@ -59,7 +59,10 @@ def make_interval_label(value_list, i):
     if i + 1 == len(value_list):
         return f"{value_list[i]}+"
     else:
-        return f"{value_list[i]}-{value_list[i+1]}"
+        if type(value_list[i]) == int:
+            return f"{value_list[i]}--{value_list[i+1] - 1}"
+        else:
+            return f"{value_list[i]}-{value_list[i+1]}"
 
 
 def make_interval_label_list(value_list):
