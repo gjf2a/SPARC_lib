@@ -22,7 +22,7 @@ def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
     x_labels = intervals_from(xs)
     bar_labels = intervals_from(bars)
     ratios = [[conditional_probability(lambda n: in_interval(x_getter(n, bar1), x1, x2) and in_interval(bar_getter(n), bar1, bar2),
-                                       lambda n: y_test(n), data)
+                                       lambda n: y_test(n, bar1), data)
                for (x1, x2) in x_labels]
               for (bar1, bar2) in bar_labels]
     return ratios

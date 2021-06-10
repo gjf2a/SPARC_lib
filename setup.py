@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='SPARC_lib',
-    version='0.16.5',
+    version='0.16.6',
     description='Tools supporting the SPARC project at Hendrix',
     url='https://github.com/gjf2a/SPARC_lib',
     author='Gabriel Ferrer',
