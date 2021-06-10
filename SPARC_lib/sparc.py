@@ -18,23 +18,45 @@ def two_condition_plot(data, x_label, xs, x_cond, y_label, bar_label, bars, bar_
     grouped_bar_plot(counts, x_label, y_label, [str(x) for x in xs], bar_label, [str(bar) for bar in bars], colors, width, figsize)
 
 
+def conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior):
+    return [[conditional_probability(lambda n: x_prior(n, x, bar) and bar_prior(n, x, bar),
+                                     lambda n: posterior(n, x, bar),
+                                     data)
+             for x in xs]
+            for bar in bars]
+
+
+def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(10, 8), dpi=100):
+    ratios = conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior)
+    x_labels = [x_labeler(x) for x in xs]
+    bar_labels = [bar_labeler(bar) for bar in bars]
+    probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
+    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize)
+    return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
+
+
 def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
     x_labels = intervals_from(xs)
     bar_labels = intervals_from(bars)
-    ratios = [[conditional_probability(lambda n: in_interval(x_getter(n, bar1), x1, x2) and in_interval(bar_getter(n), bar1, bar2),
-                                       lambda n: y_test(n, bar1), data)
+    return [[conditional_probability(lambda n: in_interval(x_getter(n, bar1), x1, x2) and in_interval(bar_getter(n), bar1, bar2),
+                                     lambda n: y_test(n, bar1),
+                                     data)
                for (x1, x2) in x_labels]
               for (bar1, bar2) in bar_labels]
-    return ratios
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
-    ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
-    x_labels = make_interval_label_list(xs)
-    bar_labels = make_interval_label_list(bars)
-    probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
-    grouped_bar_plot(probs, x_label, y_label, x_labels, bar_label, bar_labels, colors, width, figsize)
-    return grouped_markdown_table(ratios, x_label, y_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
+    return conditional_plot(data, x_label, intervals_from(xs),
+                            lambda x, n, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
+                            bar_label, intervals_from(bars),
+                            lambda x, n, bar: in_interval(bar_getter(n), bar[0], bar[1]),
+                            y_label, y_test, colors, width, figsize, dpi)
+    #ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
+    #x_labels = make_interval_label_list(xs)
+    #bar_labels = make_interval_label_list(bars)
+    #probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
+    #grouped_bar_plot(probs, x_label, y_label, x_labels, bar_label, bar_labels, colors, width, figsize)
+    #return grouped_markdown_table(ratios, x_label, y_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(10, 8), dpi=100):
