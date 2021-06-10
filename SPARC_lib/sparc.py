@@ -21,10 +21,10 @@ def two_condition_plot(data, x_label, xs, x_cond, y_label, bar_label, bars, bar_
 def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
     x_labels = intervals_from(xs)
     bar_labels = intervals_from(bars)
-    ratios = [[conditional_probability(lambda n: in_interval(x_getter(n), x, x_next) and in_interval(bar_getter(n), group, group_next),
+    ratios = [[conditional_probability(lambda n: in_interval(x_getter(n, bar1), x1, x2) and in_interval(bar_getter(n), bar1, bar2),
                                        lambda n: y_test(n), data)
-               for (x, x_next) in x_labels]
-              for (group, group_next) in bar_labels]
+               for (x1, x2) in x_labels]
+              for (bar1, bar2) in bar_labels]
     return ratios
 
 
