@@ -15,7 +15,7 @@ def three_condition_counts(data, xs, x_cond, y_cond, bars, bar_cond):
 
 def three_condition_plot(data, x_label, xs, x_cond, y_label, y_cond, bar_label, bars, bar_cond, colors=None, width=0.1, figsize=(10, 8), dpi=100):
     counts = three_condition_counts(data, xs, x_cond, y_cond, bars, bar_cond)
-    grouped_bar_plot(counts, x_label, y_label, xs, bar_label, bars, colors, width, figsize)
+    grouped_bar_plot(counts, x_label, y_label, [str(x) for x in xs], bar_label, [str(bar) for bar in bars], colors, width, figsize)
 
 
 def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
