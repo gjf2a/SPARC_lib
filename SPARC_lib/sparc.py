@@ -19,8 +19,8 @@ def two_condition_plot(data, x_label, xs, x_cond, y_label, bar_label, bars, bar_
 
 
 def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
-    x_labels = list(intervals_from(xs))
-    bar_labels = list(intervals_from(bars))
+    x_labels = intervals_from(xs)
+    bar_labels = intervals_from(bars)
     ratios = [[conditional_probability(lambda n: in_interval(x_getter(n), x, x_next) and in_interval(bar_getter(n), group, group_next),
                                        lambda n: y_test(n), data)
                for (x, x_next) in x_labels]
@@ -106,7 +106,7 @@ def unzip(tuple_values):
 
 
 def intervals_from(xs):
-    return zip(xs, xs[1:] + [None])
+    return list(zip(xs, xs[1:] + [None]))
 
 
 def in_interval(value, x, x_next):
