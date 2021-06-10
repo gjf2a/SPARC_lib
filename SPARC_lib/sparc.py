@@ -50,7 +50,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
                             bar_label, intervals_from(bars),
                             lambda n, x, bar: in_interval(bar_getter(n), bar[0], bar[1]),
-                            y_label, y_test, colors, width, figsize, dpi)
+                            y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, width, figsize, dpi)
     #ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
     #x_labels = make_interval_label_list(xs)
     #bar_labels = make_interval_label_list(bars)
