@@ -16,7 +16,7 @@ def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
                                        lambda n: y_test(n), data)
                for (x, x_next) in x_labels]
               for (group, group_next) in bar_labels]
-    return x_labels, bar_labels, ratios
+    return make_interval_label_list(x_labels), make_interval_label_list(bar_labels), ratios
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
