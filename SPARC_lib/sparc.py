@@ -47,9 +47,9 @@ def get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter):
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(10, 8), dpi=100):
     return conditional_plot(data, x_label, intervals_from(xs),
-                            lambda x, n, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
+                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
                             bar_label, intervals_from(bars),
-                            lambda x, n, bar: in_interval(bar_getter(n), bar[0], bar[1]),
+                            lambda n, x, bar: in_interval(bar_getter(n), bar[0], bar[1]),
                             y_label, y_test, colors, width, figsize, dpi)
     #ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
     #x_labels = make_interval_label_list(xs)
