@@ -50,7 +50,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
                             bar_label, intervals_from(bars),
                             lambda n, x, bar: in_interval(bar_getter(n), bar[0], bar[1]),
-                            y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, width, figsize, dpi)
+                            y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, lambda x: make_range_label(x[0], x[1]), lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
     #ratios = get_grouped_ratios(data, xs, x_getter, y_test, bars, bar_getter)
     #x_labels = make_interval_label_list(xs)
     #bar_labels = make_interval_label_list(bars)
@@ -87,11 +87,13 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
 
 
 def make_interval_label(value_list, i):
-    if i + 1 == len(value_list):
-        return f"{value_list[i]}+"
+    make_range_label(value_list[i], value_list[i+1] if i + 1 < len(value_list) else None)
+
+
+def make_range_label(start, end):
+    if end is None:
+        return f"{start}+"
     else:
-        start = value_list[i]
-        end = value_list[i+1]
         if type(start) == int and type(end) == int:
             end -= 1
         if start == end:
