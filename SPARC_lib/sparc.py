@@ -10,7 +10,7 @@ from functools import total_ordering
 
 
 def two_condition_counts(data, xs, x_cond, bars, bar_cond):
-    return [[len([n for n in data if x_cond(x, n) and bar_cond(bar, n)]) for x in xs] for bar in bars]
+    return [[len([n for n in data if x_cond(x, n, bar) and bar_cond(bar, n)]) for x in xs] for bar in bars]
 
 
 def two_condition_plot(data, x_label, xs, x_cond, y_label, bar_label, bars, bar_cond, colors=None, width=0.1, figsize=(10, 8), dpi=100):
