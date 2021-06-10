@@ -26,7 +26,7 @@ def conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior):
             for bar in bars]
 
 
-def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(10, 8), dpi=100):
+def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
     ratios = conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
