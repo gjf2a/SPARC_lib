@@ -67,8 +67,6 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
         table_data.append(row)
     return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: " + x_labels[0]] + x_labels[1:], table_data)
 
-#def make_nested_data(data_set, )
-
 
 def make_interval_label(value_list, i):
     make_range_label(value_list[i], value_list[i+1] if i + 1 < len(value_list) else None)
