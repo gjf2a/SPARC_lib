@@ -231,15 +231,26 @@ class Course:
     term: str
 
 
-def course_info(code: str, title: str, grade: str, yr_term: str, term=None) -> Course:
+def course_info(code: str, title: str, grade: str, year: str, term=None) -> Course:
     if type(code) == str:
         code_parts = code.split()
         if len(code_parts) == 2:
             code_parts.append('')
         discipline, number, section = code_parts
         if term is None:
-            year, term = yr_term.split("_")
+            year, term = year.split("_")
         return Course(discipline, number, section, title, grade, int(year), term)
+
+
+def load_course_table(courses):
+    student2courses = {}
+    for index, row in courses.iterrows():
+        id_num = row['id_num']
+        if id_num not in student2courses:
+            student2courses[id_num] = []
+        student2courses[id_num].append(
+            course_info(row['crs_cde'], row['crs_title'], row['grade_cde'], row['yr_cde'], row['trm_cde']))
+    return student2courses
 
 
 class Tests(unittest.TestCase):
