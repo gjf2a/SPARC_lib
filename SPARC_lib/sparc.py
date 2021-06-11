@@ -231,13 +231,14 @@ class Course:
     term: str
 
 
-def course_info(code: str, title: str, grade: str, yr_term: str) -> Course:
+def course_info(code: str, title: str, grade: str, yr_term: str, term=None) -> Course:
     if type(code) == str:
         code_parts = code.split()
         if len(code_parts) == 2:
             code_parts.append('')
         discipline, number, section = code_parts
-        year, term = yr_term.split("_")
+        if term is None:
+            year, term = yr_term.split("_")
         return Course(discipline, number, section, title, grade, int(year), term)
 
 
