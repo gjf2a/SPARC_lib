@@ -26,12 +26,12 @@ def conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior):
             for bar in bars]
 
 
-def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
+def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
     ratios = conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
-    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize)
+    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize, dpi, legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
 
@@ -43,7 +43,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, lambda x: make_range_label(x[0], x[1]), lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(6, 4), dpi=100):
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
     if colors is None:
         colors = ['blue']
     colors = InfiniteRepeatingList(colors)
@@ -55,7 +55,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     for i in range(len(nested_data)):
         ax.bar(X + i * width, nested_data[i], color=colors[i], width=width, label=(bar_label + " " + bar_labels[i]).strip())
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
-    plt.legend(loc="upper left")
+    plt.legend(loc=legend_loc)
 
 
 def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d):
