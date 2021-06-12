@@ -257,6 +257,17 @@ def load_course_table(courses):
     return student2courses
 
 
+def has_taken(courses: List[Course], discipline: str, number: str) -> bool:
+    return has_match(courses, lambda course: course.discipline == discipline and course.number == number)
+
+
+def has_match(courses: List[Course], predicate) -> bool:
+    for course in courses:
+        if predicate(course):
+            return True
+    return False
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
