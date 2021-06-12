@@ -9,6 +9,10 @@ import openpyxl
 from functools import total_ordering
 
 
+def one_condition_plot(data, x_label, xs, x_cond, y_label):
+    two_condition_plot(data, x_label, xs, x_cond, y_label, [y_label], lambda b: True, y_label, colors=['blue'])
+
+
 def two_condition_counts(data, xs, x_cond, bars, bar_cond):
     return [[len([n for n in data if x_cond(n, x, bar) and bar_cond(n, x, bar)]) for x in xs] for bar in bars]
 
