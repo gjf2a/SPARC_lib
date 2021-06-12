@@ -62,13 +62,14 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     plt.legend(loc=legend_loc)
 
 
-def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d):
+def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar)):
     table_data = []
     for i, values in enumerate(nested_data):
-        row = [bar_labels[i]]
+        row = [bar_labeler(bar_labels[i])]
         for value in values:
             row.append(convert(value))
         table_data.append(row)
+    x_labels = [x_labeler(x) for x in x_labels]
     return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:], table_data)
 
 
