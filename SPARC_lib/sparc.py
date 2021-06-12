@@ -9,30 +9,28 @@ import openpyxl
 from functools import total_ordering
 
 
-def one_condition_plot(data, x_label, xs, x_cond, y_label):
-    return two_condition_plot(data, x_label, xs, lambda n, x, bar: x_cond(n, x), '', [y_label], lambda n, x, b: True, y_label, colors=['blue'])
+def one_condition_plot(data, x_label, xs, cond, y_label):
+    return two_condition_plot(data, x_label, xs, lambda n, x, bar: cond(n, x), '', [y_label], lambda n, x, b: True, y_label, colors=['blue'])
 
 
-def two_condition_counts(data, xs, x_cond, bars, bar_cond):
-    return [[len([n for n in data if x_cond(n, x, bar) and bar_cond(n, x, bar)]) for x in xs] for bar in bars]
+def two_condition_counts(data, cond, xs, bars):
+    return [[len([n for n in data if cond(n, x, bar)]) for x in xs] for bar in bars]
 
 
-def two_condition_plot(data, x_label, xs, x_cond, bar_label, bars, bar_cond, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
-    counts = two_condition_counts(data, xs, x_cond, bars, bar_cond)
+def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
+    counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label, [bar_labeler(bar) for bar in bars], colors, width, figsize)
     return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars)
 
 
-def conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior):
-    return [[conditional_probability(lambda n: x_prior(n, x, bar) and bar_prior(n, x, bar),
-                                     lambda n: posterior(n, x, bar),
-                                     data)
+def conditional_ratios(data, xs, bars, prior, posterior):
+    return [[conditional_probability(lambda n: prior(n, x, bar), lambda n: posterior(n, x, bar), data)
              for x in xs]
             for bar in bars]
 
 
-def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, post_label, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
-    ratios = conditional_ratios(data, xs, x_prior, bars, bar_prior, posterior)
+def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
+    ratios = conditional_ratios(data, xs, bars, prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
@@ -41,11 +39,12 @@ def conditional_plot(data, x_label, xs, x_prior, bar_label, bars, bar_prior, pos
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(6, 4), dpi=100):
-    return conditional_plot(data, x_label, intervals_from(xs),
-                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]),
-                            bar_label, intervals_from(bars),
-                            lambda n, x, bar: in_interval(bar_getter(n), bar[0], bar[1]),
-                            y_label, lambda n, x, bar: y_test(n, x[0], bar[0]), colors, lambda x: make_range_label(x[0], x[1]), lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
+    return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
+                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(bar_getter(n), bar[0], bar[1]),
+                            lambda n, x, bar: y_test(n, x[0], bar[0]),
+                            colors,
+                            lambda x: make_range_label(x[0], x[1]),
+                            lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
