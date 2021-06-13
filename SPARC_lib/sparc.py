@@ -272,7 +272,7 @@ def has_match(courses: List[Course], predicate) -> bool:
     return False
 
 
-def grade_for(courses: List[Course], discipline: str, number: str) -> str:
+def first_grade_for(courses: List[Course], discipline: str, number: str) -> str:
     for course in courses:
         if course.matches(discipline, number):
             return course.grade
