@@ -235,6 +235,9 @@ class Course:
     year: int
     term: str
 
+    def matches(self, discipline: str, number: str) -> bool:
+        return self.discipline == discipline and self.number == number
+
 
 def course_info(code: str, title: str, grade: str, year: str, term=None) -> Course:
     if type(code) == str:
@@ -259,7 +262,7 @@ def load_course_table(courses):
 
 
 def has_taken(courses: List[Course], discipline: str, number: str) -> bool:
-    return has_match(courses, lambda course: course.discipline == discipline and course.number == number)
+    return has_match(courses, lambda course: course.matches(discipline, number))
 
 
 def has_match(courses: List[Course], predicate) -> bool:
@@ -267,6 +270,12 @@ def has_match(courses: List[Course], predicate) -> bool:
         if predicate(course):
             return True
     return False
+
+
+def grade_for(courses: List[Course], discipline: str, number: str) -> str:
+    for course in courses:
+        if course.matches(discipline, number):
+            return course.grade
 
 
 class Tests(unittest.TestCase):
