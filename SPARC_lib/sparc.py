@@ -15,7 +15,7 @@ def zipped_sorted_data(data, xs, cond):
 
 def sorted_condition_plot(data, x_label, xs, cond, y_label):
     xs, data = unzip(zipped_sorted_data(data, xs, cond))
-    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label])
+    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], legend_loc="upper right")
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
