@@ -10,7 +10,8 @@ from functools import total_ordering
 
 
 def zipped_sorted_data(data, xs, cond):
-    return sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
+    baseline = sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
+    return [(x, count) for (x, count) in baseline if count > 0]
 
 
 def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6), width=0.1):
