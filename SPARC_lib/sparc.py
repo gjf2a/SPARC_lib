@@ -13,9 +13,9 @@ def zipped_sorted_data(data, xs, cond):
     return sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
 
 
-def sorted_condition_plot(data, x_label, xs, cond, y_label):
+def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6), width=0.1):
     xs, data = unzip(zipped_sorted_data(data, xs, cond))
-    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], legend_loc="upper right")
+    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize, width=width, legend_loc="upper right")
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
@@ -29,7 +29,7 @@ def two_condition_counts(data, cond, xs, bars):
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
     counts = two_condition_counts(data, cond, xs, bars)
-    grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label, [bar_labeler(bar) for bar in bars], colors, width, figsize)
+    grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label, [bar_labeler(bar) for bar in bars], colors, width, figsize, dpi)
     return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, x_labeler=x_labeler, bar_labeler=bar_labeler)
 
 
