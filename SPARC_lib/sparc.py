@@ -9,6 +9,16 @@ import openpyxl
 from functools import total_ordering
 
 
+def zipped_sorted_data(data, xs, cond):
+    return sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
+
+
+def sorted_condition_plot(data, x_label, xs, cond, y_label):
+    xs, data = unzip(zipped_sorted_data(data, xs, cond))
+    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label])
+    return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
+
+
 def one_condition_plot(data, x_label, xs, cond, y_label):
     return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'])
 
