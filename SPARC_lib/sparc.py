@@ -60,9 +60,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x) and in_interval(bar_getter(n), bar),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
-                            colors,
-                            lambda x: make_range_label(x[0], x[1]),
-                            lambda bar: make_range_label(bar[0], bar[1]), figsize, dpi, legend_loc)
+                            colors, make_range_label, make_range_label, figsize, dpi, legend_loc)
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
@@ -100,7 +98,9 @@ def make_interval_label(value_list, i):
     make_range_label(value_list[i], value_list[i + 1] if i + 1 < len(value_list) else None)
 
 
-def make_range_label(start, end):
+def make_range_label(start, end=None):
+    if end is None and type(start) == tuple and len(start) == 2:
+        start, end = start
     if end is None:
         return f"{start}+"
     else:
