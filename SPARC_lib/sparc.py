@@ -56,14 +56,14 @@ def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, post
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
-                        figsize=(6, 4), dpi=100):
+                        figsize=(6, 4), dpi=100, legend_loc="upper left"):
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(
                                 bar_getter(n), bar[0], bar[1]),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
                             colors,
                             lambda x: make_range_label(x[0], x[1]),
-                            lambda bar: make_range_label(bar[0], bar[1]), figsize, dpi)
+                            lambda bar: make_range_label(bar[0], bar[1]), figsize, dpi, legend_loc)
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
