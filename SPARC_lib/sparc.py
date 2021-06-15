@@ -14,15 +14,15 @@ def zipped_sorted_data(data, xs, cond):
     return [(x, count) for (x, count) in baseline if count > 0]
 
 
-def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6), width=0.5):
+def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6)):
     xs, data = unzip(zipped_sorted_data(data, xs, cond))
-    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize, width=width,
+    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize,
                      legend_loc="upper right")
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
-def one_condition_plot(data, x_label, xs, cond, y_label, width=0.5):
-    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'], width=width)
+def one_condition_plot(data, x_label, xs, cond, y_label):
+    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'])
 
 
 def two_condition_counts(data, cond, xs, bars):
@@ -30,10 +30,10 @@ def two_condition_counts(data, cond, xs, bars):
 
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
-                       bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
+                       bar_labeler=lambda bar: str(bar), figsize=(6, 4), dpi=100):
     counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
-                     [bar_labeler(bar) for bar in bars], colors, width, figsize, dpi)
+                     [bar_labeler(bar) for bar in bars], colors, figsize, dpi)
     return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, x_labeler=x_labeler,
                                   bar_labeler=bar_labeler)
 
@@ -45,29 +45,28 @@ def conditional_ratios(data, xs, bars, prior, posterior):
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
-                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100,
+                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(6, 4), dpi=100,
                      legend_loc='upper left'):
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
-    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize, dpi,
-                     legend_loc)
+    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
-                        width=0.1, figsize=(6, 4), dpi=100):
+                        figsize=(6, 4), dpi=100):
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(
                                 bar_getter(n), bar[0], bar[1]),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
                             colors,
                             lambda x: make_range_label(x[0], x[1]),
-                            lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
+                            lambda bar: make_range_label(bar[0], bar[1]), figsize, dpi)
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1,
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
                      figsize=(6, 4), dpi=100, legend_loc='upper left'):
     if colors is None:
         colors = ['blue']
