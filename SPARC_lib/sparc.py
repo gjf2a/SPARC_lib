@@ -148,8 +148,10 @@ def intervals_from(xs):
     return list(zip(xs, xs[1:] + [None]))
 
 
-def in_interval(value, x, x_next):
-    return value >= x and (x_next is None or x_next > value)
+def in_interval(value, start, end=None):
+    if end is None and type(start) == tuple and len(start) == 2:
+        start, end = start
+    return value >= start and (end is None or end > value)
 
 
 def make_markdown_table(headers: List[str], data: List) -> str:
@@ -411,6 +413,7 @@ class Tests(unittest.TestCase):
         (((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
             for outcome in test[0]:
                 self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
+                self.assertEqual(in_interval(outcome[0], test[1]), outcome[1])
 
     def test_course(self):
         c1 = course_info("ENGL 234  04", "Creative Nonfiction - The Essay", "A", "2019_2S")
