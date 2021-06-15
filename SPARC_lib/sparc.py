@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import *
 
 import pandas as pd
 import numpy as np
@@ -16,7 +16,8 @@ def zipped_sorted_data(data, xs, cond):
 
 def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6), width=0.1):
     xs, data = unzip(zipped_sorted_data(data, xs, cond))
-    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize, width=width, legend_loc="upper right")
+    grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize, width=width,
+                     legend_loc="upper right")
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
@@ -28,10 +29,13 @@ def two_condition_counts(data, cond, xs, bars):
     return [[len([n for n in data if cond(n, x, bar)]) for x in xs] for bar in bars]
 
 
-def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
+def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
+                       bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100):
     counts = two_condition_counts(data, cond, xs, bars)
-    grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label, [bar_labeler(bar) for bar in bars], colors, width, figsize, dpi)
-    return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, x_labeler=x_labeler, bar_labeler=bar_labeler)
+    grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
+                     [bar_labeler(bar) for bar in bars], colors, width, figsize, dpi)
+    return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, x_labeler=x_labeler,
+                                  bar_labeler=bar_labeler)
 
 
 def conditional_ratios(data, xs, bars, prior, posterior):
@@ -40,25 +44,31 @@ def conditional_ratios(data, xs, bars, prior, posterior):
             for bar in bars]
 
 
-def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
+def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
+                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), width=0.1, figsize=(6, 4), dpi=100,
+                     legend_loc='upper left'):
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
-    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize, dpi, legend_loc)
+    grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, width, figsize, dpi,
+                     legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels, lambda r: r.percent())
 
 
-def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None, width=0.1, figsize=(6, 4), dpi=100):
+def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
+                        width=0.1, figsize=(6, 4), dpi=100):
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
-                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(bar_getter(n), bar[0], bar[1]),
+                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(
+                                bar_getter(n), bar[0], bar[1]),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
                             colors,
                             lambda x: make_range_label(x[0], x[1]),
                             lambda bar: make_range_label(bar[0], bar[1]), width, figsize, dpi)
 
 
-def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1, figsize=(6, 4), dpi=100, legend_loc='upper left'):
+def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None, width=0.1,
+                     figsize=(6, 4), dpi=100, legend_loc='upper left'):
     if colors is None:
         colors = ['blue']
     colors = InfiniteRepeatingList(colors)
@@ -68,12 +78,14 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     ax.set_ylabel(y_label)
     X = np.arange(len(x_labels))
     for i in range(len(nested_data)):
-        ax.bar(X + i * width, nested_data[i], color=colors[i], width=width, label=(bar_label + " " + bar_labels[i]).strip())
+        ax.bar(X + i * width, nested_data[i], color=colors[i], width=width,
+               label=(bar_label + " " + bar_labels[i]).strip())
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
     plt.legend(loc=legend_loc)
 
 
-def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d, x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar)):
+def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, convert=lambda d: d,
+                           x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar)):
     table_data = []
     for i, values in enumerate(nested_data):
         row = [bar_labeler(bar_labels[i])]
@@ -81,11 +93,12 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
             row.append(convert(value))
         table_data.append(row)
     x_labels = [x_labeler(x) for x in x_labels]
-    return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:], table_data)
+    return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:],
+                                                     table_data)
 
 
 def make_interval_label(value_list, i):
-    make_range_label(value_list[i], value_list[i+1] if i + 1 < len(value_list) else None)
+    make_range_label(value_list[i], value_list[i + 1] if i + 1 < len(value_list) else None)
 
 
 def make_range_label(start, end):
@@ -217,11 +230,11 @@ def find_biggest_jump(ratio_list: List[Ratio]) -> int:
     biggest = 0
     biggest_size = 0.0
     for i in range(1, len(ratio_list)):
-        if not ratio_list[i-1].defined():
+        if not ratio_list[i - 1].defined():
             if ratio_list[i].defined():
                 return i
         elif ratio_list[i].defined():
-            size = abs(float(ratio_list[i]) - float(ratio_list[i-1]))
+            size = abs(float(ratio_list[i]) - float(ratio_list[i - 1]))
             if size > biggest_size:
                 biggest = i
                 biggest_size = size
@@ -248,6 +261,12 @@ class Course:
 
     def matches(self, discipline: str, number: str) -> bool:
         return self.discipline == discipline and self.number == number
+
+    def weight(self) -> float:
+        if (self.discipline == 'LBST' and self.number == '101') or self.discipline in ('TARA', 'MUSA'):
+            return 0.25
+        else:
+            return 1.0
 
 
 def course_info(code: str, title: str, grade: str, year: str, term=None) -> Course:
@@ -287,6 +306,53 @@ def first_grade_for(courses: List[Course], discipline: str, number: str) -> str:
     for course in courses:
         if course.matches(discipline, number):
             return course.grade
+
+
+class Averager:
+    def __init__(self, total=0, count=0):
+        self.total = total
+        self.count = count
+
+    def __repr__(self):
+        return f'Averager({self.total}, {self.count})'
+
+    def __add__(self, other: 'Averager'):
+        return Averager(self.total + other.total, self.count + other.count)
+
+    def add(self, value, weight=1.0):
+        if type(value) == str:
+            if value in 'ABCDF':
+                value = grade2points(value)
+            else:
+                return None
+        self.total += value * weight
+        self.count += weight
+
+    def average(self):
+        if self.count > 0:
+            return self.total / self.count
+
+
+def discipline_averagers(courses: List[Course]) -> Dict[str,Averager]:
+    result = {}
+    for course in courses:
+        if course.discipline not in result:
+            result[course.discipline] = Averager()
+        result[course.discipline].add(course.grade, course.weight())
+    return result
+
+
+def category_gpas(courses: List[Course], category: List[str], exclusions: List[str] = None) -> (float, float):
+    averagers = discipline_averagers(courses)
+    category_value = Averager()
+    other = Averager()
+    for discipline, averager in averagers.items():
+        if not exclusions or discipline not in exclusions:
+            if discipline in category:
+                category_value += averager
+            else:
+                other += averager
+    return category_value.average(), other.average()
 
 
 class Tests(unittest.TestCase):
@@ -338,7 +404,8 @@ class Tests(unittest.TestCase):
     def test_intervals(self):
         intervals = list(intervals_from([1, 3, 5, 7]))
         self.assertEqual([(1, 3), (3, 5), (5, 7), (7, None)], intervals)
-        for test in ((((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
+        for test in (
+        (((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
             for outcome in test[0]:
                 self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
 
@@ -367,9 +434,12 @@ class Tests(unittest.TestCase):
 
     def test_grouped_markdown(self):
         data = [[Ratio(3, 5), Ratio(7, 7), Ratio(8, 8), Ratio(13, 13), Ratio(21, 21)],
-         [Ratio(19, 30), Ratio(24, 25), Ratio(44, 45), Ratio(79, 80), Ratio(129, 132)],
-         [Ratio(9, 12), Ratio(20, 23), Ratio(31, 34), Ratio(68, 71), Ratio(112, 116)],
-         [Ratio(3, 5), Ratio(17, 17), Ratio(20, 21), Ratio(27, 27), Ratio(47, 47)],
-         [Ratio(4, 5), Ratio(7, 9), Ratio(6, 6), Ratio(10, 11), Ratio(20, 20)]]
-        md = grouped_markdown_table(data, 'Career GPA after Semester 1', 'Fraction retained in Semester 2', ['0-2.0', '2.0-2.5', '2.5-3.0', '3.0-3.5', '3.5+'], 'Median Zip9 Income', ['0-40000', '40000-80000', '80000-120000', '120000-160000', '160000+'], lambda d: d.percent())
+                [Ratio(19, 30), Ratio(24, 25), Ratio(44, 45), Ratio(79, 80), Ratio(129, 132)],
+                [Ratio(9, 12), Ratio(20, 23), Ratio(31, 34), Ratio(68, 71), Ratio(112, 116)],
+                [Ratio(3, 5), Ratio(17, 17), Ratio(20, 21), Ratio(27, 27), Ratio(47, 47)],
+                [Ratio(4, 5), Ratio(7, 9), Ratio(6, 6), Ratio(10, 11), Ratio(20, 20)]]
+        md = grouped_markdown_table(data, 'Career GPA after Semester 1', 'Fraction retained in Semester 2',
+                                    ['0-2.0', '2.0-2.5', '2.5-3.0', '3.0-3.5', '3.5+'], 'Median Zip9 Income',
+                                    ['0-40000', '40000-80000', '80000-120000', '120000-160000', '160000+'],
+                                    lambda d: d.percent())
         print(md)
