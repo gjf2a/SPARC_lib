@@ -77,6 +77,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     X = np.arange(len(x_labels))
+    width = 1.0 / (len(nested_data) + 1)
     for i in range(len(nested_data)):
         ax.bar(X + i * width, nested_data[i], color=colors[i], width=width,
                label=(bar_label + " " + bar_labels[i]).strip())
