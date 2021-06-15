@@ -329,8 +329,11 @@ class Averager:
         self.count += weight
 
     def average(self):
-        if self.count > 0:
+        if self.defined():
             return self.total / self.count
+
+    def defined(self):
+        return self.count > 0
 
 
 def discipline_averagers(courses: List[Course]) -> Dict[str,Averager]:
