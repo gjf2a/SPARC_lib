@@ -58,8 +58,7 @@ def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, post
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
                         figsize=(6, 4), dpi=100, legend_loc="upper left"):
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
-                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x[0], x[1]) and in_interval(
-                                bar_getter(n), bar[0], bar[1]),
+                            lambda n, x, bar: in_interval(x_getter(n, bar[0]), x) and in_interval(bar_getter(n), bar),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
                             colors,
                             lambda x: make_range_label(x[0], x[1]),
