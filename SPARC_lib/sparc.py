@@ -264,7 +264,7 @@ class Course:
         return self.discipline == discipline and self.number == number
 
     def weight(self) -> float:
-        if (self.discipline == 'LBST' and self.number == '101') or self.discipline in ('DANA', 'TARA', 'MUSA'):
+        if (self.discipline == 'LBST' and self.number == '101') or self.discipline in ('DANA', 'TARA', 'MUSA', 'PACT'):
             return 0.25
         else:
             return 1.0
