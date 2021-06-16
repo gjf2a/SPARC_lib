@@ -309,7 +309,8 @@ def build_term_to_courses(courses, entrance_year):
 
 
 def lowest_grade_from(courses):
-    return max([course.grade for course in courses if course.grade in 'ABCDF'])
+    courses = [course.grade for course in courses if course.grade in 'ABCDF']
+    return max(courses) if len(courses) > 0 else None
 
 
 def has_taken(courses: List[Course], discipline: str, number: str) -> bool:
