@@ -14,7 +14,7 @@ def zipped_sorted_data(data, xs, cond):
     return [(x, count) for (x, count) in baseline if count > 0]
 
 
-def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 6)):
+def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
     xs, data = unzip(zipped_sorted_data(data, xs, cond))
     grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize,
                      legend_loc="upper right")
@@ -30,7 +30,7 @@ def two_condition_counts(data, cond, xs, bars):
 
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
-                       bar_labeler=lambda bar: str(bar), figsize=(6, 4), dpi=100):
+                       bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100):
     counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
                      [bar_labeler(bar) for bar in bars], colors, figsize, dpi)
@@ -45,7 +45,7 @@ def conditional_ratios(data, xs, bars, prior, posterior):
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
-                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(6, 4), dpi=100,
+                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
                      legend_loc='upper left'):
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
     x_labels = [x_labeler(x) for x in xs]
@@ -56,7 +56,7 @@ def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, post
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
-                        figsize=(6, 4), dpi=100, legend_loc="upper left"):
+                        figsize=(10, 3), dpi=100, legend_loc="upper left"):
     return conditional_plot(data, x_label, intervals_from(xs), bar_label, intervals_from(bars), y_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x) and in_interval(bar_getter(n), bar),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
@@ -64,7 +64,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
-                     figsize=(6, 4), dpi=100, legend_loc='upper left'):
+                     figsize=(10, 3), dpi=100, legend_loc='upper left'):
     if colors is None:
         colors = ['blue']
     colors = InfiniteRepeatingList(colors)
