@@ -279,8 +279,10 @@ class Course:
 def course_info(code: str, title: str, grade: str, year: str, term=None) -> Course:
     if type(code) == str:
         code_parts = code.split()
-        if len(code_parts) == 2:
+        while len(code_parts) < 3:
             code_parts.append('')
+        if len(code_parts) > 3:
+            print(f"uh oh... {code_parts}")
         discipline, number, section = code_parts
         if term is None:
             year, term = year.split("_")
