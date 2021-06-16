@@ -269,6 +269,12 @@ class Course:
         else:
             return 1.0
 
+    def semester_number(self, entrance_year):
+        number = 1 + 2 * (self.year - int(entrance_year))
+        if self.term == '2S':
+            number += 1
+        return number
+
 
 def course_info(code: str, title: str, grade: str, year: str, term=None) -> Course:
     if type(code) == str:
@@ -290,6 +296,16 @@ def load_course_table(courses):
         student2courses[id_num].append(
             course_info(row['crs_cde'], row['crs_title'], row['grade_cde'], row['yr_cde'], row['trm_cde']))
     return student2courses
+
+
+def build_term_to_courses(courses, entrance_year):
+    term2courses = {}
+    for course in courses:
+        term = course.semester_number(entrance_year)
+        if term not in term2courses:
+            term2courses[term] = []
+        term2courses[term].append(course)
+    return term2courses
 
 
 def has_taken(courses: List[Course], discipline: str, number: str) -> bool:
