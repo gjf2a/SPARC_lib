@@ -308,6 +308,10 @@ def build_term_to_courses(courses, entrance_year):
     return term2courses
 
 
+def lowest_grade_from(courses):
+    return max([course.grade for course in courses if course.grade in 'ABCDF'])
+
+
 def has_taken(courses: List[Course], discipline: str, number: str) -> bool:
     return has_match(courses, lambda course: course.matches(discipline, number))
 
