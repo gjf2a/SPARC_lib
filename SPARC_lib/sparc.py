@@ -148,9 +148,12 @@ def intervals_from(xs):
 
 
 def in_interval(value, start, end=None):
-    if end is None and type(start) == tuple and len(start) == 2:
-        start, end = start
-    return value >= start and (end is None or end > value)
+    if value is None:
+        return False
+    else:
+        if end is None and type(start) == tuple and len(start) == 2:
+            start, end = start
+        return value >= start and (end is None or end > value)
 
 
 def make_markdown_table(headers: List[str], data: List) -> str:
