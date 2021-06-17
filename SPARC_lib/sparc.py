@@ -385,6 +385,10 @@ def category_gpas(courses: List[Course], category: List[str], exclusions: List[s
     return category_value.average(), other.average()
 
 
+def get_term_data_list(row, suffix):
+    return [float(row[f'Term {i} {suffix}']) for i in range(1, 9)]
+
+
 class Histogram:
     def __init__(self, hist=None):
         self.hist = {} if hist is None else hist
