@@ -382,6 +382,34 @@ def category_gpas(courses: List[Course], category: List[str], exclusions: List[s
     return category_value.average(), other.average()
 
 
+class Histogram:
+    def __init__(self, hist=None):
+        self.hist = {} if hist is None else hist
+
+    def __repr__(self):
+        return f"Histogram({self.hist})"
+
+    def bump(self, key):
+        if key not in self.hist:
+            self.hist[key] = 0
+        self.hist[key] += 1
+
+    def count_for(self, key):
+        return self.hist.get(key, 0)
+
+    def total_count(self):
+        return sum(self.hist.values())
+
+    def all_labels(self):
+        return self.hist.keys()
+
+    def mode(self):
+        return max([(count, key) for (key, count) in self.hist.items()])[1]
+
+    def ranking(self):
+        return [(key, count) for (count,key) in reversed(sorted([(count, key) for (key, count) in self.hist.items()]))]
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
@@ -471,3 +499,18 @@ class Tests(unittest.TestCase):
                                     ['0-40000', '40000-80000', '80000-120000', '120000-160000', '160000+'],
                                     lambda d: d.percent())
         print(md)
+
+    def test_hist(self):
+        hist = Histogram()
+        values = [10, 15, 20]
+        for i in range(len(values)):
+            for j in range(values[i]):
+                hist.bump(i)
+
+        for i in range(len(values)):
+            self.assertEqual(hist.count_for(i), values[i])
+
+        self.assertEqual(len(values), len(hist.all_labels()))
+        self.assertEqual(sum(values), hist.total_count())
+        self.assertEqual(2, hist.mode())
+        self.assertEqual([(2, 20), (1, 15), (0, 10)], hist.ranking())
