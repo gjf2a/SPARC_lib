@@ -385,7 +385,7 @@ def category_gpas(courses: List[Course], category: List[str], exclusions: List[s
     return category_value.average(), other.average()
 
 
-def get_term_data_list(row, suffix):
+def get_term_data(row, suffix):
     return {i: float(row[f'Term {i} {suffix}']) for i in range(1, 9)}
 
 
