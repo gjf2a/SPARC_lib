@@ -9,13 +9,13 @@ import openpyxl
 from functools import total_ordering
 
 
-def zipped_sorted_data(data, xs, cond):
+def zipped_sorted_counts(data, xs, cond):
     baseline = sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
     return [(x, count) for (x, count) in baseline if count > 0]
 
 
 def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
-    xs, data = unzip(zipped_sorted_data(data, xs, cond))
+    xs, data = unzip(zipped_sorted_counts(data, xs, cond))
     grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize,
                      legend_loc="upper right")
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
@@ -42,6 +42,18 @@ def conditional_ratios(data, xs, bars, prior, posterior):
     return [[conditional_probability(lambda n: prior(n, x, bar), lambda n: posterior(n, x, bar), data)
              for x in xs]
             for bar in bars]
+
+
+def zipped_sorted_ratios(data, xs, prior, posterior):
+    return sorted([(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs],
+                      key=lambda p: -float(p[1]) if p[1].defined() else 0.0)
+
+
+def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_labeler=lambda x: str(x), figsize=(10, 3)):
+    xs, data = unzip(zipped_sorted_ratios(data, xs, prior, posterior))
+    xs = [x_labeler(x) for x in xs]
+    grouped_bar_plot([data], x_label, post_label, xs, '', [post_label], figsize=figsize, legend_loc="upper right")
+    return grouped_markdown_table([data], x_label, post_label, xs, '', [post_label])
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
