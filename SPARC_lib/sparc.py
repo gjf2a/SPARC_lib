@@ -55,7 +55,7 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
     xs = [x_labeler(x) for x in xs]
     probs = [float(r) for r in ratios]
     grouped_bar_plot([probs], x_label, post_label, xs, '', [post_label], figsize=figsize, legend_loc="upper right")
-    return grouped_markdown_table([data], x_label, post_label, xs, '', [post_label])
+    return grouped_markdown_table([ratios], x_label, post_label, xs, '', [post_label], lambda r: r.percent())
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
