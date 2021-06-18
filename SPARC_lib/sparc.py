@@ -45,15 +45,15 @@ def conditional_ratios(data, xs, bars, prior, posterior):
 
 
 def zipped_sorted_ratios(data, xs, prior, posterior):
-    data = [r for r in data if r.defined()]
-    return sorted([(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs],
-                      key=lambda p: -float(p[1]))
+    baseline = [(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs]
+    data = [(x, ratio) for (x, ratio) in baseline if ratio.defined()]
+    return sorted(data, key=lambda p: -float(p[1]))
 
 
 def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_labeler=lambda x: str(x), figsize=(10, 3)):
-    xs, data = unzip(zipped_sorted_ratios(data, xs, prior, posterior))
+    xs, ratios = unzip(zipped_sorted_ratios(data, xs, prior, posterior))
     xs = [x_labeler(x) for x in xs]
-    probs = [float(r) for r in data]
+    probs = [float(r) for r in ratios]
     grouped_bar_plot([probs], x_label, post_label, xs, '', [post_label], figsize=figsize, legend_loc="upper right")
     return grouped_markdown_table([data], x_label, post_label, xs, '', [post_label])
 
