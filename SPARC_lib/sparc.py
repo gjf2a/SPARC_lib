@@ -94,7 +94,7 @@ def get_averages(data, value_getter, labels_from, label_matcher):
 def sorted_average_plot(data, x_label, y_label, value_getter, labels_from, label_matcher, figsize=(10, 3)):
     xs, averages = unzip(get_averages(data, value_getter, labels_from, label_matcher))
     grouped_bar_plot([averages], x_label, y_label, xs, '', [y_label], figsize=figsize, legend_loc="upper right")
-    return grouped_markdown_table([averages], x_label, y_label, xs, '', [y_label])
+    return grouped_markdown_table([averages], x_label, y_label, xs, '', [y_label], convert=lambda avg: '{:.4f}'.format(avg))
 
 
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
