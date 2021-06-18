@@ -77,7 +77,7 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             colors, make_range_label, make_range_label, figsize, dpi, legend_loc)
 
 
-def get_averages(data, value_getter, labels_from, label_matcher):
+def zipped_sorted_averages(data, value_getter, labels_from, label_matcher):
     labels = set()
     for row in data:
         for label in labels_from(row):
@@ -92,7 +92,7 @@ def get_averages(data, value_getter, labels_from, label_matcher):
 
 
 def sorted_average_plot(data, x_label, y_label, value_getter, labels_from, label_matcher, figsize=(10, 3)):
-    xs, averages = unzip(get_averages(data, value_getter, labels_from, label_matcher))
+    xs, averages = unzip(zipped_sorted_averages(data, value_getter, labels_from, label_matcher))
     grouped_bar_plot([averages], x_label, y_label, xs, '', [y_label], figsize=figsize, legend_loc="upper right")
     return grouped_markdown_table([averages], x_label, y_label, xs, '', [y_label], convert=lambda avg: '{:.4f}'.format(avg))
 
@@ -126,6 +126,36 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
     x_labels = [x_labeler(x) for x in x_labels]
     return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:],
                                                      table_data)
+
+
+def list2dict(items):
+    return {key: value for key, value in items}
+
+
+def merge_lists(items1, items2):
+    d1 = list2dict(items1)
+    d2 = list2dict(items2)
+    result = {}
+    for k1, v1 in d1.items():
+        if k1 in d2:
+            result[k1] = (v1, d2[k1])
+    return result
+
+
+def labeled_scatter(x_label, x_zipped, y_label, y_zipped, refline=None, x_convert=lambda x: x, y_convert=lambda y: y,
+                    figsize=(8, 7)):
+    label2xy = merge_lists(x_zipped, y_zipped)
+    xs = [x for x, y in label2xy.values()]
+    ys = [y for x, y in label2xy.values()]
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    plt.scatter(xs, ys)
+    if refline:
+        plt.plot(refline[0], refline[1])
+    for label, xy in label2xy.items():
+        plt.annotate(label, xy)
 
 
 def make_interval_label(value_list, i):
