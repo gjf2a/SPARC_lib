@@ -94,7 +94,6 @@ def sorted_average_plot(data, x_label, y_label, value_getter, label_getter, labe
     return grouped_markdown_table([averages], x_label, y_label, xs, '', [y_label])
 
 
-
 def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_labels, colors=None,
                      figsize=(10, 3), dpi=100, legend_loc='upper left'):
     if colors is None:
