@@ -77,19 +77,22 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             colors, make_range_label, make_range_label, figsize, dpi, legend_loc)
 
 
-def get_averages(data, value_getter, label_getter, label_matcher):
-    labels = {label_getter(row) for row in data}
+def get_averages(data, value_getter, labels_from, label_matcher):
+    labels = set()
+    for row in data:
+        for label in labels_from(row):
+            labels.add(label)
     label_averages = {label: Averager() for label in labels}
     for row in data:
         for label in labels:
-            if label_matcher(row):
+            if label_matcher(row, label):
                 label_averages[label].add(value_getter(row))
     unsorted = [(label, avg.average()) for label, avg in label_averages.items() if avg.defined()]
     return sorted(unsorted, key=lambda p: -p[1])
 
 
-def sorted_average_plot(data, x_label, y_label, value_getter, label_getter, label_matcher, figsize=(10, 3)):
-    xs, averages = unzip(get_averages(data, value_getter, label_getter, label_matcher))
+def sorted_average_plot(data, x_label, y_label, value_getter, labels_from, label_matcher, figsize=(10, 3)):
+    xs, averages = unzip(get_averages(data, value_getter, labels_from, label_matcher))
     grouped_bar_plot([averages], x_label, y_label, xs, '', [y_label], figsize=figsize, legend_loc="upper right")
     return grouped_markdown_table([averages], x_label, y_label, xs, '', [y_label])
 
