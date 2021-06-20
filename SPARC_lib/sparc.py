@@ -110,7 +110,7 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     width = 1.0 / (len(nested_data) + 1.5)
     for i in range(len(nested_data)):
         ax.bar(X + i * width, nested_data[i], color=colors[i], width=width,
-               label=(bar_label + " " + bar_labels[i]).strip())
+               label=f'{bar_label} {bar_labels[i]}'.strip())
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
     plt.legend(loc=legend_loc)
 
