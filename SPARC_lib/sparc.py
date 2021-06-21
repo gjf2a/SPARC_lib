@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 import unittest
 import openpyxl
 from functools import total_ordering
+import math
 
 
 def zipped_sorted_counts(data, xs, cond):
@@ -451,6 +452,16 @@ def category_gpas(courses: List[Course], category: List[str], exclusions: List[s
 
 def get_term_data(row, suffix):
     return {i: float(row[f'Term {i} {suffix}']) for i in range(1, 9)}
+
+
+def great_circle(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    lon1 = math.radians(lon1)
+    lon2 = math.radians(lon2)
+    value = math.acos(math.sin(lat1) * math.sin(lat2) + math.cos(lat1) * math.cos(lat2) * math.cos(abs(lon1 - lon2)))
+    value = math.degrees(value)
+    return 69.0 * value
 
 
 class Histogram:
