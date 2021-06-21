@@ -143,12 +143,12 @@ def merge_lists(items1, items2):
     return result
 
 
-def basic_scatter(x_label, xs, y_label, ys, figsize=(8, 7)):
+def basic_scatter(x_label, xs, y_label, ys, alpha=1.0, figsize=(8, 7)):
     fig = plt.figure(figsize=figsize)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    plt.scatter(xs, ys)
+    plt.scatter(xs, ys, alpha=alpha)
 
 
 def labeled_scatter(x_label, x_zipped, y_label, y_zipped, refline=None, figsize=(8, 7)):
