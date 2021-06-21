@@ -151,7 +151,7 @@ def basic_scatter(x_label, xs, y_label, ys, alpha=1.0, figsize=(8, 7)):
     plt.scatter(xs, ys, alpha=alpha)
 
 
-def filtered_scatter(x_label, y_label, records, record_filter, x_select, y_select, alpha=1.0, figsize=(8, 7)):
+def filtered_scatter(x_label, y_label, records, x_select, y_select, record_filter=lambda r: True, alpha=1.0, figsize=(8, 7)):
     filtered = [record for record in records if record_filter(record)]
     xs = [x_select(record) for record in filtered]
     ys = [y_select(record) for record in filtered]
