@@ -158,10 +158,10 @@ def filtered_scatter(x_label, y_label, records, x_select, y_select, record_filte
     basic_scatter(x_label, xs, y_label, ys, alpha, figsize)
 
 
-def labeled_scatter(x_label, x_zipped, y_label, y_zipped, refline=None, figsize=(8, 7)):
+def labeled_scatter(x_label, x_zipped, y_label, y_zipped, x_convert=lambda x: x, y_convert=lambda y: y, refline=None, figsize=(8, 7)):
     label2xy = merge_lists(x_zipped, y_zipped)
-    xs = [x for x, y in label2xy.values()]
-    ys = [y for x, y in label2xy.values()]
+    xs = [x_convert(x) for x, y in label2xy.values()]
+    ys = [y_convert(y) for x, y in label2xy.values()]
     fig = plt.figure(figsize=figsize)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlabel(x_label)
