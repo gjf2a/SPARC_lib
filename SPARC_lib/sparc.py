@@ -371,6 +371,16 @@ def course_info(code: str, title: str, grade: str, year: str, term=None) -> Cour
         return Course(discipline, number, section, title, grade, int(year), term)
 
 
+def int_filter_nan(value):
+    if type(value) == str and value.isdigit():
+        return int(value)
+
+
+def float_filter_nan(value):
+    if type(value) == str:
+        return float(value)
+
+
 def load_course_table(courses):
     student2courses = {}
     for index, row in courses.iterrows():
