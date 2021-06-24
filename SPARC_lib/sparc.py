@@ -512,8 +512,20 @@ class Histogram:
     def mode(self):
         return max([(count, key) for (key, count) in self.hist.items()])[1]
 
-    def ranking(self):
-        return [(key, count) for (count,key) in reversed(sorted([(count, key) for (key, count) in self.hist.items()]))]
+    def ranking(self, min_count=0):
+        return [(key, count) for (count,key) in reversed(sorted([(count, key) for (key, count) in self.hist.items() if count >= min_count]))]
+
+
+def plot_histogram_counts(hist: Histogram, x_label, figsize=(10, 3), dpi=100,
+                          legend_loc="lower right", min_count=0):
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlabel(x_label)
+    ax.set_ylabel("Count")
+    x_labels, xs = unzip(hist.ranking(min_count))
+    plt.bar(x_labels, xs)
+    plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
+    plt.legend(loc=legend_loc)
 
 
 class Tests(unittest.TestCase):
