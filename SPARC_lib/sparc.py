@@ -47,7 +47,7 @@ def conditional_ratios(data, xs, bars, prior, posterior):
 
 def zipped_sorted_ratios(data, xs, prior, posterior):
     baseline = [(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs]
-    data = [(x, ratio) for (x, ratio) in baseline if ratio.defined()]
+    data = [(x, ratio) for (x, ratio) in baseline if ratio.defined() and ratio.numerator > 0]
     return sorted(data, key=lambda p: -float(p[1]))
 
 
