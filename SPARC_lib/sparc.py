@@ -67,8 +67,8 @@ def any_and_all_indices(outer_len, inner_len, getter, min_any, min_all):
 
 def min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all):
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
-    x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x], min_denominator_any, min_denominator_all)
-    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x], min_denominator_any, min_denominator_all)
+    x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x].denominator, min_denominator_any, min_denominator_all)
+    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x].denominator, min_denominator_any, min_denominator_all)
     result = []
     for bar_index in bar_indices:
         bar = []
