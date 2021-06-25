@@ -65,10 +65,10 @@ def any_and_all_indices(outer_len, inner_len, getter, min_any, min_all):
     return sorted(list(set(indices_any).intersection(indices_all)))
 
 
-def min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all):
+def min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar, min_all_bar):
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
-    x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x].denominator, min_denominator_any, min_denominator_all)
-    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x].denominator, min_denominator_any, min_denominator_all)
+    x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x].denominator, min_any_x, min_all_x)
+    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x].denominator, min_any_bar, min_all_bar)
     result = []
     for bar_index in bar_indices:
         bar = []
@@ -94,9 +94,9 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
                      x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
-                     legend_loc='upper left', min_denominator_any=1, min_denominator_all=0):
+                     legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0, min_all_bar=0):
     #ratios = conditional_ratios(data, xs, bars, prior, posterior)
-    xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
+    xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar, min_all_bar)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
