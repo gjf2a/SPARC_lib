@@ -62,7 +62,7 @@ def matching_indices(outer_len, inner_len, bool_identity, match_func):
 def any_and_all_indices(outer_len, inner_len, getter, min_any, min_all):
     indices_any = matching_indices(outer_len, inner_len, False, lambda i, j: getter(i, j) >= min_any)
     indices_all = matching_indices(outer_len, inner_len, True, lambda i, j: getter(i, j) >= min_all)
-    return sorted(list(set(indices_any + indices_all)))
+    return sorted(list(set(indices_any).intersection(indices_all)))
 
 
 def min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all):
