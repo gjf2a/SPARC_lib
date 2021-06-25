@@ -96,7 +96,7 @@ def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, post
                      x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
                      legend_loc='upper left', min_denominator_any=1, min_denominator_all=0):
     #ratios = conditional_ratios(data, xs, bars, prior, posterior)
-    ratios, xs, bars = min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
+    xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
