@@ -45,6 +45,39 @@ def conditional_ratios(data, xs, bars, prior, posterior):
             for bar in bars]
 
 
+def matching_indices(outer_len, inner_len, bool_identity, match_func):
+    indices = []
+    for i in range(outer_len):
+        cond = bool_identity
+        for j in range(inner_len):
+            if bool_identity:
+                cond = cond and match_func(i, j)
+            else:
+                cond = cond or match_func(i, j)
+        if cond:
+            indices.append(i)
+    return indices
+
+
+def any_and_all_indices(outer_len, inner_len, getter, min_any, min_all):
+    indices_any = matching_indices(outer_len, inner_len, False, lambda i, j: getter(i, j) >= min_any)
+    indices_all = matching_indices(outer_len, inner_len, True, lambda i, j: getter(i, j) >= min_all)
+    return sorted(list(set(indices_any + indices_all)))
+
+
+def min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all):
+    ratios = conditional_ratios(data, xs, bars, prior, posterior)
+    x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x], min_denominator_any, min_denominator_all)
+    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x], min_denominator_any, min_denominator_all)
+    result = []
+    for bar_index in bar_indices:
+        bar = []
+        for x_index in x_indices:
+            bar.append(ratios[bar_index][x_index])
+        result.append(bar)
+    return [xs[i] for i in x_indices], [bars[i] for i in bar_indices], result
+
+
 def zipped_sorted_ratios(data, xs, prior, posterior):
     baseline = [(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs]
     data = [(x, ratio) for (x, ratio) in baseline if ratio.defined() and ratio.numerator > 0]
@@ -61,8 +94,9 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
                      x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
-                     legend_loc='upper left'):
-    ratios = conditional_ratios(data, xs, bars, prior, posterior)
+                     legend_loc='upper left', min_denominator_any=1, min_denominator_all=0):
+    #ratios = conditional_ratios(data, xs, bars, prior, posterior)
+    ratios, xs, bars = min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
@@ -632,3 +666,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(sum(values), hist.total_count())
         self.assertEqual(2, hist.mode())
         self.assertEqual([(2, 20), (1, 15), (0, 10)], hist.ranking())
+
+    #def test_filtered_ratios(self):
+    #    data = [(1, 2), (2, 2), (3, 2), (3, 4), (2, 4), (10, 2), (10, 5), (8, 3)]
+    #    min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
