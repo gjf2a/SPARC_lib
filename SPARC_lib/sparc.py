@@ -31,10 +31,10 @@ def two_condition_counts(data, cond, xs, bars):
 
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
-                       bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100):
+                       bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100, legend_loc="lower left"):
     counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
-                     [bar_labeler(bar) for bar in bars], colors, figsize, dpi)
+                     [bar_labeler(bar) for bar in bars], colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, 0, add_totals=True,
                                   x_labeler=x_labeler, bar_labeler=bar_labeler)
 
