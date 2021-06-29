@@ -162,7 +162,7 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
         bar_labels = bar_labels + ["Total"]
         x_labels.append("Total")
     for i, values in enumerate(nested_data):
-        row = [bar_labeler(bar_labels[i])]
+        row = [bar_labeler(bar_labels[i]) if bar_labels[i] != 'Total' else bar_labels[i]]
         for value in values:
             row.append(convert(value))
         table_data.append(row)
