@@ -95,14 +95,14 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
                      x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
-                     legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0, min_all_bar=0):
+                     legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0, min_all_bar=0, add_totals=True):
     xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar, min_all_bar)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
     grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels,
-                                  Ratio(0, 0), add_totals=True, convert=lambda r: r.percent())
+                                  Ratio(0, 0), add_totals=add_totals, convert=lambda r: r.percent())
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
