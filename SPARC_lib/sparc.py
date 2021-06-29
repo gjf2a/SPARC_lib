@@ -290,7 +290,7 @@ def in_interval(value, start, end=None):
 
 
 def make_markdown_table(headers: List[str], data: List) -> str:
-    s = f"| {' | '.join(headers)} |\n| {' | '.join([(len(header) - 1) * '-' + ':' for header in headers])} |\n"
+    s = f"| {' | '.join(headers)} |\n| {' | '.join([(max(1, len(header) - 1)) * '-' + ':' for header in headers])} |\n"
     for row in data:
         s += f"| {' | '.join([str(item) for item in row])} |\n"
     return s
