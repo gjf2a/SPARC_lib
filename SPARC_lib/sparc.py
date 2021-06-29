@@ -19,7 +19,7 @@ def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
     xs, data = unzip(zipped_sorted_counts(data, xs, cond))
     grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize,
                      legend_loc="upper right")
-    return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label], 0)
+    return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
 def one_condition_plot(data, x_label, xs, cond, y_label):
@@ -35,7 +35,7 @@ def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors
     counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
                      [bar_labeler(bar) for bar in bars], colors, figsize, dpi)
-    return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, 0,
+    return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, 0, add_totals=True,
                                   x_labeler=x_labeler, bar_labeler=bar_labeler)
 
 
@@ -90,7 +90,7 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
     probs = [float(r) for r in ratios]
     grouped_bar_plot([probs], x_label, post_label, xs, '', [post_label], figsize=figsize, legend_loc="upper right")
     return grouped_markdown_table([ratios], x_label, post_label, xs, '', [post_label],
-                                  Ratio(0, 0), lambda r: r.percent())
+                                  Ratio(0, 0), convert=lambda r: r.percent())
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
@@ -102,7 +102,7 @@ def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, post
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
     grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels,
-                                  Ratio(0, 0), lambda r: r.percent())
+                                  Ratio(0, 0), add_totals=True, convert=lambda r: r.percent())
 
 
 def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label, bars, bar_getter, colors=None,
@@ -153,18 +153,19 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
 
 
 def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels,
-                           additive_identity, convert=lambda d: d,
+                           additive_identity=0, add_totals=False, convert=lambda d: d,
                            x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar)):
     table_data = []
-    nested_data = totaled_nested_data(nested_data, additive_identity)
-    bar_labels = bar_labels + ["Total"]
+    x_labels = [x_labeler(x) for x in x_labels]
+    if add_totals:
+        nested_data = totaled_nested_data(nested_data, additive_identity)
+        bar_labels = bar_labels + ["Total"]
+        x_labels.append("Total")
     for i, values in enumerate(nested_data):
         row = [bar_labeler(bar_labels[i])]
         for value in values:
             row.append(convert(value))
         table_data.append(row)
-    x_labels = [x_labeler(x) for x in x_labels]
-    x_labels.append("Total")
     return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:],
                                                      table_data)
 
@@ -671,7 +672,7 @@ class Tests(unittest.TestCase):
         md = grouped_markdown_table(data, 'Career GPA after Semester 1', 'Fraction retained in Semester 2',
                                     ['0-2.0', '2.0-2.5', '2.5-3.0', '3.0-3.5', '3.5+'], 'Median Zip9 Income',
                                     ['0-40000', '40000-80000', '80000-120000', '120000-160000', '160000+'],
-                                    Ratio(0, 0), lambda d: d.percent())
+                                    Ratio(0, 0), add_totals=True, convert=lambda d: d.percent())
         print(md)
 
     def test_hist(self):
