@@ -300,6 +300,10 @@ def grade2points(grade):
     return max(0.0, 4.0 - (ord(grade.upper()) - ord('A')))
 
 
+def percent_str_from(num, denom):
+    return format(num * 100 / denom, ".2f") + "%" if denom != 0 else "Undefined"
+
+
 @total_ordering
 class Ratio:
     def __init__(self, numerator=0, denominator=0):
@@ -322,7 +326,7 @@ class Ratio:
         return Ratio(self.numerator + other.numerator, self.denominator + other.denominator)
 
     def percent(self):
-        return f'{self.numerator}/{self.denominator} ({format(float(self) * 100, ".2f") + "%" if self.defined() else "Undefined"})'
+        return f'{self.numerator}/{self.denominator} ({percent_str_from(self.numerator, self.denominator)})'
 
     def defined(self):
         return self.denominator != 0
@@ -508,6 +512,9 @@ class Averager:
     def average(self):
         if self.defined():
             return self.total / self.count
+
+    def percent_str(self):
+        return percent_str_from(self.total, self.count)
 
     def defined(self):
         return self.count > 0
