@@ -438,6 +438,10 @@ def float_filter_nan(value):
         return float(value)
 
 
+def str_filter_nan(value):
+    return value if type(value) == str else ''
+
+
 def load_course_table(courses):
     student2courses = {}
     for index, row in courses.iterrows():
