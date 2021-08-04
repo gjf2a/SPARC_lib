@@ -22,8 +22,8 @@ def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
     return grouped_markdown_table([data], x_label, y_label, xs, '', [y_label])
 
 
-def one_condition_plot(data, x_label, xs, cond, y_label):
-    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'])
+def one_condition_plot(data, x_label, xs, cond, y_label, x_labeler=lambda x: str(x)):
+    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'], x_labeler=x_labeler)
 
 
 def two_condition_counts(data, cond, xs, bars):
