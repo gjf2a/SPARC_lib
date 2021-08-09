@@ -596,6 +596,55 @@ def plot_histogram_counts(hist: Histogram, x_label, figsize=(10, 3), dpi=100,
     plt.legend(loc=legend_loc)
 
 
+class ConfusionMatrix:
+    def __init__(self, data_list, predict_func, actual_func):
+        self.true_pos = 0
+        self.false_pos = 0
+        self.true_neg = 0
+        self.false_neg = 0
+
+        for datum in data_list:
+            if predict_func(datum):
+                if actual_func(datum):
+                    self.true_pos += 1
+                else:
+                    self.false_pos += 1
+            else:
+                if actual_func(datum):
+                    self.false_neg += 1
+                else:
+                    self.true_neg += 1
+
+    def precision(self):
+        return self.true_pos / (self.true_pos + self.false_pos)
+
+    def recall(self):
+        return self.true_pos / (self.true_pos + self.false_neg)
+
+
+def precision_recall_points(threshold_list, data_list, predict_func_maker, actual_func):
+    points = []
+    for threshold in threshold_list:
+        predict_func = predict_func_maker(threshold)
+        matrix = ConfusionMatrix(data_list, predict_func, actual_func)
+        points.append((matrix.recall(), matrix.precision()))
+    return points
+
+
+def precision_recall_markdown(points):
+    return make_markdown_table(["Recall", "Precision"], points)
+
+
+def area_under_curve(x_y_points):
+    area = 0
+    for i in range(len(x_y_points) - 1):
+        x1, y1 = x_y_points[i]
+        x2, y2 = x_y_points[i+1]
+        assert x2 >= x1
+        area += (x2 - x1) * ((y1 + y2) / 2)
+    return area
+
+
 class Tests(unittest.TestCase):
     def test_dollars(self):
         self.assertEqual(12345.6, dollars2float("$12345.60"))
