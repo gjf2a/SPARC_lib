@@ -617,11 +617,11 @@ class ConfusionMatrix:
 
     def precision(self):
         denominator = self.true_pos + self.false_pos
-        return self.true_pos / denominator if denominator != 0 else 0.0
+        return self.true_pos / denominator if denominator != 0 else None
 
     def recall(self):
         denominator = self.true_pos + self.false_neg
-        return self.true_pos / denominator if denominator != 0 else 0.0
+        return self.true_pos / denominator if denominator != 0 else None
 
 
 def precision_recall_points(threshold_list, data_list, predict_func_maker, actual_func):
@@ -629,7 +629,9 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
     for threshold in threshold_list:
         predict_func = predict_func_maker(threshold)
         matrix = ConfusionMatrix(data_list, predict_func, actual_func)
-        points.append((matrix.recall(), matrix.precision()))
+        r, p = matrix.recall(), matrix.precision()
+        if p is not None and r is not None:
+            points.append((r, p))
     return points
 
 
