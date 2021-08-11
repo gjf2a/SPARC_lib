@@ -637,7 +637,7 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
 
 
 def precision_recall_markdown(threshold_header, pr_points):
-    return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"])
+    return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"], pr_points)
 
 
 def precision_recall_auc(pr_points):
