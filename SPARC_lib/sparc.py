@@ -632,12 +632,16 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
     for threshold in threshold_list:
         predict_func = predict_func_maker(threshold)
         matrix = ConfusionMatrix(data_list, predict_func, actual_func)
-        points.append((threshold, matrix.total_pos(), matrix.precision(), matrix.recall()))
+        points.append((threshold, matrix.true_pos, matrix.false_pos, matrix.true_neg, matrix.false_neg, matrix.precision(), matrix.recall()))
     return points
 
 
+def precision_recall_markdown(threshold_header, pr_points):
+    return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"])
+
+
 def precision_recall_auc(pr_points):
-    x_y_points = [(r, p) for (t, c, p, r) in pr_points if r is not None and p is not None]
+    x_y_points = [(r, p) for (t, tp, fp, tn, fn, p, r) in pr_points if r is not None and p is not None]
     return area_under_curve(x_y_points)
 
 
