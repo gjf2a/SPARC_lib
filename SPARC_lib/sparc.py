@@ -623,20 +623,25 @@ class ConfusionMatrix:
         denominator = self.true_pos + self.false_neg
         return self.true_pos / denominator if denominator != 0 else None
 
+    def total_pos(self):
+        return self.true_pos + self.false_pos
+
 
 def precision_recall_points(threshold_list, data_list, predict_func_maker, actual_func):
     points = []
     for threshold in threshold_list:
         predict_func = predict_func_maker(threshold)
         matrix = ConfusionMatrix(data_list, predict_func, actual_func)
+        points.append((threshold, matrix.total_pos(), matrix.precision(), matrix.recall()))
         r, p = matrix.recall(), matrix.precision()
         if p is not None and r is not None:
             points.append((r, p))
     return points
 
 
-def precision_recall_markdown(points):
-    return make_markdown_table(["Recall", "Precision"], points)
+def precision_recall_auc(pr_points):
+    x_y_points = [(r, p) for (t, c, p, r) in pr_points if r is not None and p is not None]
+    return area_under_curve(x_y_points)
 
 
 def area_under_curve(x_y_points):
