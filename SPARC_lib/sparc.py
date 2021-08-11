@@ -633,9 +633,6 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
         predict_func = predict_func_maker(threshold)
         matrix = ConfusionMatrix(data_list, predict_func, actual_func)
         points.append((threshold, matrix.total_pos(), matrix.precision(), matrix.recall()))
-        r, p = matrix.recall(), matrix.precision()
-        if p is not None and r is not None:
-            points.append((r, p))
     return points
 
 
