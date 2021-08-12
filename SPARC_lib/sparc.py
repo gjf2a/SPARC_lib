@@ -636,8 +636,21 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
     return points
 
 
+def scaled_pr_points(pr_points, target_pop_size):
+    scaled_points = []
+    for (threshold, true_pos, false_pos, true_neg, false_neg, precision, recall) in pr_points:
+        pop = true_pos + true_neg + false_pos + false_neg
+        tps = true_pos * target_pop_size // pop
+        fps = false_pos * target_pop_size // pop
+        tns = true_neg * target_pop_size // pop
+        fns = false_neg * target_pop_size // pop
+        scaled_points.append((threshold, tps, fps, tns, fns, precision, recall))
+    return scaled_points
+
+
 def precision_recall_markdown(threshold_header, pr_points):
-    return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"], pr_points)
+    return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"],
+                               pr_points)
 
 
 def precision_recall_auc(pr_points):
