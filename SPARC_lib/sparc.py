@@ -645,7 +645,6 @@ def scaled_pr_points(pr_points, target_pop_size):
         tns = true_neg * target_pop_size // pop
         fns = false_neg * target_pop_size // pop
         scaled_points.append((threshold, tps, fps, tns, fns, precision, recall))
-        target_pop_size -= (tps + fns)
     return scaled_points
 
 
