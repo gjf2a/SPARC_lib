@@ -429,7 +429,7 @@ def course_info(code: str, title: str, grade: str, year: str, term=None) -> Cour
         discipline, number, section = code_parts
         if term is None:
             year, term = year.split("_")
-        return Course(discipline, number, section, title, grade, int(year), term)
+        return Course(discipline, number, section, title.strip(), grade.strip(), int(year), term)
 
 
 def int_filter_nan(value):
