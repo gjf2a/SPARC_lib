@@ -317,10 +317,18 @@ class Ratio:
         return self.numerator / self.denominator
 
     def __lt__(self, other):
-        return float(self) < float(other)
+        if self.defined() and other.defined():
+            return float(self) < float(other)
+        elif self.defined() and not other.defined():
+            return True
+        else:
+            return False
 
     def __eq__(self, other):
-        return float(self) == float(other)
+        if self.defined() and other.defined():
+            return float(self) == float(other)
+        else:
+            return self.defined() == other.defined()
 
     def __add__(self, other: 'Ratio'):
         return Ratio(self.numerator + other.numerator, self.denominator + other.denominator)
