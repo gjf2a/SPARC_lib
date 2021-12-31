@@ -11,11 +11,14 @@ import math
 
 
 def zipped_sorted_counts(data, xs, cond):
+    """For each x, counts the number of true instances of cond(n, x) for each n in data.
+    It then sorts in descending order by counts and returns a list of (x, count) pairs."""
     baseline = sorted([(x, len([n for n in data if cond(n, x)])) for x in xs], key=lambda n: -n[1])
     return [(x, count) for (x, count) in baseline if count > 0]
 
 
 def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
+    """Creates bar chart and returns a markdown table of data from zipped_sorted_counts()."""
     xs, data = unzip(zipped_sorted_counts(data, xs, cond))
     grouped_bar_plot([data], x_label, y_label, xs, '', [y_label], figsize=figsize,
                      legend_loc="upper right")
@@ -23,15 +26,21 @@ def sorted_condition_plot(data, x_label, xs, cond, y_label, figsize=(10, 3)):
 
 
 def one_condition_plot(data, x_label, xs, cond, y_label, x_labeler=lambda x: str(x)):
-    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'], x_labeler=x_labeler)
+    """cond() is a function of two arguments: a value from data, and an x value. Each bar height
+    represents the number of data elements for which cond(n, x) is true. """
+    return two_condition_plot(data, lambda n, x, bar: cond(n, x), x_label, xs, '', [y_label], y_label, colors=['blue'],
+                              x_labeler=x_labeler)
 
 
 def two_condition_counts(data, cond, xs, bars):
+    """For each element of bars, creates a list of counts for each n in data for which cond(n, x, bar) is true."""
     return [[len([n for n in data if cond(n, x, bar)]) for x in xs] for bar in bars]
 
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
                        bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100, legend_loc="lower left"):
+    """cond() is a function of three arguments: a value from data, an x value, and a bar value.
+    Each bar height represents the number of data elements for which cond(n, x, bar) is true."""
     counts = two_condition_counts(data, cond, xs, bars)
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
                      [bar_labeler(bar) for bar in bars], colors, figsize, dpi, legend_loc)
@@ -40,35 +49,47 @@ def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors
 
 
 def conditional_ratios(data, xs, bars, prior, posterior):
+    """For each triple (n, x, bar) from data, xs, and bars, returns P(posterior(n, x, bar) | prior(n, x, bar))."""
     return [[conditional_probability(lambda n: prior(n, x, bar), lambda n: posterior(n, x, bar), data)
              for x in xs]
             for bar in bars]
 
 
 def matching_indices(outer_len, inner_len, bool_identity, match_func):
-    indices = []
-    for i in range(outer_len):
-        cond = bool_identity
-        for j in range(inner_len):
-            if bool_identity:
-                cond = cond and match_func(i, j)
-            else:
-                cond = cond or match_func(i, j)
-        if cond:
-            indices.append(i)
-    return indices
+    """Returns a subset of indices from the range [0, outer_len) for which:
+    * match_func(i, j) (for each j in [0, inner_len)) is true either:
+      * If bool_identity is false, for any j
+      * If bool_identity is true, for all j"""
+    return [i for i in range(outer_len) if match_checker(i, inner_len, bool_identity, match_func)]
+
+
+def match_checker(i, inner_len, bool_identity, match_func):
+    """Helper function for inner loop of matching_indices."""
+    bools = (match_func(i, j) for j in range(inner_len))
+    return all(bools) if bool_identity else any(bools)
 
 
 def any_and_all_indices(outer_len, inner_len, getter, min_any, min_all):
+    """Filters indices so that, when calling getter(i, j), only indices that meet the min_any
+    and min_all constraints are included."""
     indices_any = matching_indices(outer_len, inner_len, False, lambda i, j: getter(i, j) >= min_any)
     indices_all = matching_indices(outer_len, inner_len, True, lambda i, j: getter(i, j) >= min_all)
     return sorted(list(set(indices_any).intersection(indices_all)))
 
 
 def min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar, min_all_bar):
+    """Filters to include only the results from conditional_ratios() whose denominators meet
+    the constraints given by the four min parameters.
+
+    Returns three items:
+    1. Valid x indices.
+    2. Valid bar indices.
+    3. Nested list of conditional ratios, with bars as the outer index and xs as the inner index.
+    """
     ratios = conditional_ratios(data, xs, bars, prior, posterior)
     x_indices = any_and_all_indices(len(xs), len(bars), lambda x, bar: ratios[bar][x].denominator, min_any_x, min_all_x)
-    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x].denominator, min_any_bar, min_all_bar)
+    bar_indices = any_and_all_indices(len(bars), len(xs), lambda bar, x: ratios[bar][x].denominator, min_any_bar,
+                                      min_all_bar)
     result = []
     for bar_index in bar_indices:
         bar = []
@@ -79,12 +100,17 @@ def min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, 
 
 
 def zipped_sorted_ratios(data, xs, prior, posterior):
+    """For each x from xs:
+    1. Creates a list with pairs of (x, conditional probability P(posterior(n, x) | prior(n, x)) for n in data)
+    2. Sorts the list in descending order of probability, ignoring Ratios with zeros for numerator or denominator."""
     baseline = [(x, conditional_probability(lambda n: prior(n, x), lambda n: posterior(n, x), data)) for x in xs]
     data = [(x, ratio) for (x, ratio) in baseline if ratio.defined() and ratio.numerator > 0]
     return sorted(data, key=lambda p: -float(p[1]))
 
 
-def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_labeler=lambda x: str(x), figsize=(10, 3)):
+def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_labeler=lambda x: str(x),
+                            figsize=(10, 3)):
+    """Creates bar chart and returns a markdown table of data from zipped_sorted_ratios()."""
     xs, ratios = unzip(zipped_sorted_ratios(data, xs, prior, posterior))
     xs = [x_labeler(x) for x in xs]
     probs = [float(r) for r in ratios]
@@ -96,7 +122,9 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
                      x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
                      legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0, min_all_bar=0, add_totals=True):
-    xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar, min_all_bar)
+    """Creates bar chart and returns a markdown table of data from min_filtered_ratios()."""
+    xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar,
+                                           min_all_bar)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
     probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
@@ -205,14 +233,16 @@ def basic_scatter(x_label, xs, y_label, ys, alpha=1.0, figsize=(8, 7)):
     plt.scatter(xs, ys, alpha=alpha)
 
 
-def filtered_scatter(x_label, y_label, records, x_select, y_select, record_filter=lambda r: True, alpha=1.0, figsize=(8, 7)):
+def filtered_scatter(x_label, y_label, records, x_select, y_select, record_filter=lambda r: True, alpha=1.0,
+                     figsize=(8, 7)):
     filtered = [record for record in records if record_filter(record)]
     xs = [x_select(record) for record in filtered]
     ys = [y_select(record) for record in filtered]
     basic_scatter(x_label, xs, y_label, ys, alpha, figsize)
 
 
-def labeled_scatter(x_label, x_zipped, y_label, y_zipped, x_convert=lambda x: x, y_convert=lambda y: y, refline=None, figsize=(8, 7)):
+def labeled_scatter(x_label, x_zipped, y_label, y_zipped, x_convert=lambda x: x, y_convert=lambda y: y, refline=None,
+                    figsize=(8, 7)):
     label2xy = merge_lists(x_zipped, y_zipped)
     xs = [x_convert(x) for x, y in label2xy.values()]
     ys = [y_convert(y) for x, y in label2xy.values()]
@@ -332,6 +362,12 @@ class Ratio:
 
     def __add__(self, other: 'Ratio'):
         return Ratio(self.numerator + other.numerator, self.denominator + other.denominator)
+
+    def __neg__(self):
+        return Ratio(-self.numerator, -self.denominator)
+
+    def __sub__(self, other: 'Ratio'):
+        return self + (-other)
 
     def percent(self):
         return f'{self.numerator}/{self.denominator} ({percent_str_from(self.numerator, self.denominator)})'
@@ -528,7 +564,7 @@ class Averager:
         return self.count > 0
 
 
-def discipline_averagers(courses: List[Course]) -> Dict[str,Averager]:
+def discipline_averagers(courses: List[Course]) -> Dict[str, Averager]:
     result = {}
     for course in courses:
         if course.discipline not in result:
@@ -589,7 +625,8 @@ class Histogram:
         return max([(count, key) for (key, count) in self.hist.items()])[1]
 
     def ranking(self, min_count=0):
-        return [(key, count) for (count,key) in reversed(sorted([(count, key) for (key, count) in self.hist.items() if count >= min_count]))]
+        return [(key, count) for (count, key) in
+                reversed(sorted([(count, key) for (key, count) in self.hist.items() if count >= min_count]))]
 
 
 def plot_histogram_counts(hist: Histogram, x_label, figsize=(10, 3), dpi=100,
@@ -640,7 +677,8 @@ def precision_recall_points(threshold_list, data_list, predict_func_maker, actua
     for threshold in threshold_list:
         predict_func = predict_func_maker(threshold)
         matrix = ConfusionMatrix(data_list, predict_func, actual_func)
-        points.append((threshold, matrix.true_pos, matrix.false_pos, matrix.true_neg, matrix.false_neg, matrix.precision(), matrix.recall()))
+        points.append((threshold, matrix.true_pos, matrix.false_pos, matrix.true_neg, matrix.false_neg,
+                       matrix.precision(), matrix.recall()))
     return points
 
 
@@ -670,7 +708,7 @@ def area_under_curve(x_y_points):
     area = 0
     for i in range(len(x_y_points) - 1):
         x1, y1 = x_y_points[i]
-        x2, y2 = x_y_points[i+1]
+        x2, y2 = x_y_points[i + 1]
         assert x2 >= x1
         area += (x2 - x1) * ((y1 + y2) / 2)
     return area
@@ -726,7 +764,7 @@ class Tests(unittest.TestCase):
         intervals = list(intervals_from([1, 3, 5, 7]))
         self.assertEqual([(1, 3), (3, 5), (5, 7), (7, None)], intervals)
         for test in (
-        (((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
+                (((1, True), (2, True), (3, False)), (1, 3)), (((2, False), (3, True), (4, True), (5, False)), (3, 5))):
             for outcome in test[0]:
                 self.assertEqual(in_interval(outcome[0], test[1][0], test[1][1]), outcome[1])
                 self.assertEqual(in_interval(outcome[0], test[1]), outcome[1])
@@ -781,6 +819,31 @@ class Tests(unittest.TestCase):
         self.assertEqual(2, hist.mode())
         self.assertEqual([(2, 20), (1, 15), (0, 10)], hist.ranking())
 
-    #def test_filtered_ratios(self):
+    def test_ratio_inequalities(self):
+        ratios = [Ratio(8, 436), Ratio(53, 2378), Ratio(7, 111), Ratio(2, 22), Ratio(195, 1770), Ratio(420, 1946),
+                  Ratio(5, 12)]
+        for i in range(1, len(ratios)):
+            self.assertTrue(ratios[i - 1] < ratios[i])
+            self.assertTrue(ratios[i] > ratios[i - 1])
+
+    def test_ratio_arithmetic(self):
+        total = Ratio(22, 29) + Ratio(3, 4)
+        self.assertEqual(total, Ratio(25, 33))
+        diff = total - Ratio(1, 2)
+        self.assertEqual(diff, Ratio(24, 31))
+
+    def test_zipped_sorted_counts(self):
+        data = [i for i in range(1, 21)]
+        num_factors_counts = zipped_sorted_counts(data, [i for i in range(1, 8)],
+                                                  lambda n, x: x == len([m for m in range(1, n + 1) if n % m == 0]))
+        self.assertEqual(num_factors_counts, [(2, 8), (4, 5), (6, 3), (3, 2), (1, 1), (5, 1)])
+
+    def test_matching_indices(self):
+        matching_any = matching_indices(100, 10, False, lambda i, j: i >= (1 + j) * 5)
+        self.assertEqual([i for i in range(5, 100)], matching_any)
+        matching_all = matching_indices(100, 10, True, lambda i, j: i >= (1 + j) * 5)
+        self.assertEqual([i for i in range(50, 100)], matching_all)
+
+    # def test_filtered_ratios(self):
     #    data = [(1, 2), (2, 2), (3, 2), (3, 4), (2, 4), (10, 2), (10, 5), (8, 3)]
     #    min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
