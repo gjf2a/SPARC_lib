@@ -362,8 +362,12 @@ def in_interval(value, start, end=None):
 def make_markdown_table(headers: List[str], data: List) -> str:
     s = f"| {' | '.join(headers)} |\n| {' | '.join([(max(1, len(header) - 1)) * '-' + ':' for header in headers])} |\n"
     for row in data:
-        s += f"| {' | '.join([str(item) for item in row])} |\n"
+        s += f"| {' | '.join([markdown_entry_for(item) for item in row])} |\n"
     return s
+
+
+def markdown_entry_for(item) -> str:
+    return format(item, ".4f") if type(item) == float else str(item)
 
 
 def grade2points(grade):
@@ -903,7 +907,3 @@ class Tests(unittest.TestCase):
         self.assertEqual(counts, [[3, 1, 3], [3, 1, 3], [1, 0, 1]])
         averages = two_condition_averages(data, cond, lambda n: n, xs, bars)
         self.assertEqual(averages, [[12.0, 12.0, 12.0], [12.0, 12.0, 12.0], [18.0, None, 18.0]])
-
-    # def test_filtered_ratios(self):
-    #    data = [(1, 2), (2, 2), (3, 2), (3, 4), (2, 4), (10, 2), (10, 5), (8, 3)]
-    #    min_filtered_ratios(data, xs, bars, prior, posterior, min_denominator_any, min_denominator_all)
