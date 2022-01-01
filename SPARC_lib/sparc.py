@@ -209,10 +209,15 @@ def grouped_bar_plot(nested_data, x_label, y_label, x_labels, bar_label, bar_lab
     X = np.arange(len(x_labels))
     width = 1.0 / (len(nested_data) + 1.5)
     for i in range(len(nested_data)):
-        ax.bar(X + i * width, nested_data[i], color=colors[i], width=width,
+        ax.bar(X + i * width, [filter_none(n, 0.0) for n in nested_data[i]], color=colors[i], width=width,
                label=f'{bar_label} {bar_labels[i]}'.strip())
     plt.xticks(ticks=[n for n in range(len(x_labels))], labels=x_labels)
     plt.legend(loc=legend_loc)
+
+
+def filter_none(value, replacement):
+    """Returns replacement if value is None, otherwise value is returned"""
+    return replacement if value is None else value
 
 
 def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, bar_labels,
