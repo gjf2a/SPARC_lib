@@ -179,16 +179,18 @@ def sorted_average_plot(data, x_label, y_label, value_getter, labels_from, label
                                   0.0, convert=lambda avg: '{:.4f}'.format(avg))
 
 
-def two_condition_averages(data, cond, xs, bars):
-    """For each element of bars, creates a list of averages for each n in data for which cond(n, x, bar) is true."""
-    return two_condition_output(data, cond, xs, bars, average)
+def two_condition_averages(data, cond, get, xs, bars):
+    """For each element of bars, creates a list of averages for each get(n) in data for which
+    cond(n, x, bar) is true."""
+    return two_condition_output(data, cond, xs, bars, lambda ns: average(get(n) for n in ns))
 
 
-def two_condition_average_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
-                               bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100, legend_loc="lower left"):
+def two_condition_average_plot(data, cond, get, x_label, xs, bar_label, bars, y_label, colors=None,
+                               x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
+                               legend_loc="lower left"):
     """cond() is a function of three arguments: a value from data, an x value, and a bar value.
-    Each bar height represents the average of data elements for which cond(n, x, bar) is true."""
-    averages = two_condition_averages(data, cond, xs, bars)
+    Each bar height represents the average of data elements processed by get(n) for which cond(n, x, bar) is true."""
+    averages = two_condition_averages(data, cond, get, xs, bars)
     grouped_bar_plot(averages, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
                      [bar_labeler(bar) for bar in bars], colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(averages, x_label, y_label, xs, bar_label, bars, 0, add_totals=False,
@@ -894,7 +896,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(values, [[[6, 12, 18], [12], [6, 12, 18]], [[6, 12, 18], [12], [6, 12, 18]], [[18], [], [18]]])
         counts = two_condition_counts(data, cond, xs, bars)
         self.assertEqual(counts, [[3, 1, 3], [3, 1, 3], [1, 0, 1]])
-        averages = two_condition_averages(data, cond, xs, bars)
+        averages = two_condition_averages(data, cond, lambda n: n, xs, bars)
         self.assertEqual(averages, [[12.0, 12.0, 12.0], [12.0, 12.0, 12.0], [18.0, None, 18.0]])
 
     # def test_filtered_ratios(self):
