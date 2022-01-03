@@ -234,8 +234,8 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
         for value in values:
             row.append(convert(value))
         table_data.append(row)
-    indent = 4 * len(y_label) + 2 * sum(len(x) for x in x_labels)
-    return f'## {y_label}\n<p style="margin-left: {indent}px"><b>{x_label}</b></p>\n\n{make_markdown_table([bar_label] + x_labels, table_data)}'
+    markdown_table, table_width = make_markdown_table([bar_label] + x_labels, table_data)
+    return f'## {y_label}\n<p style="margin-left: {4 * table_width}px"><b>{x_label}</b></p>\n\n{markdown_table}'
 
 
 def totaled_nested_data(nested_data, additive_identity):
@@ -359,11 +359,14 @@ def in_interval(value, start, end=None):
         return value >= start and (end is None or end > value)
 
 
-def make_markdown_table(headers: List[str], data: List) -> str:
+def make_markdown_table(headers: List[str], data: List) -> (str, int):
     s = f"| {' | '.join(headers)} |\n| {' | '.join([(max(1, len(header) - 1)) * '-' + ':' for header in headers])} |\n"
+    max_width = len(s)
     for row in data:
-        s += f"| {' | '.join([markdown_entry_for(item) for item in row])} |\n"
-    return s
+        line = f"| {' | '.join([markdown_entry_for(item) for item in row])} |\n"
+        max_width = max(max_width, len(line))
+        s += line
+    return s, max_width
 
 
 def markdown_entry_for(item) -> str:
@@ -748,7 +751,7 @@ def scaled_pr_points(pr_points, target_pop_size):
 
 def precision_recall_markdown(threshold_header, pr_points):
     return make_markdown_table([threshold_header, "True +", "False +", "True -", "False -", "Precision", "Recall"],
-                               pr_points)
+                               pr_points)[0]
 
 
 def precision_recall_auc(pr_points):
@@ -788,7 +791,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(conditional_probability(lambda x: x % 2 == 1, lambda x: x > 10, nums), Ratio(45, 50))
 
     def test_make_markdown(self):
-        table = make_markdown_table(["Alpha", "Beta", "Gamma"], [(1, 2, 3), (3, 6, 9)])
+        table, width = make_markdown_table(["Alpha", "Beta", "Gamma"], [(1, 2, 3), (3, 6, 9)])
         target = """| Alpha | Beta | Gamma |
 | ----: | ---: | ----: |
 | 1 | 2 | 3 |
