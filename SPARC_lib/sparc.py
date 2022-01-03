@@ -234,8 +234,7 @@ def grouped_markdown_table(nested_data, x_label, y_label, x_labels, bar_label, b
         for value in values:
             row.append(convert(value))
         table_data.append(row)
-    return f'## {y_label}\n\n' + make_markdown_table([bar_label] + [f"{x_label}: {x_labels[0]}"] + x_labels[1:],
-                                                     table_data)
+    return f'## {y_label}\n<center><b>{x_label}</b></center>\n{make_markdown_table([bar_label] + x_labels, table_data)}'
 
 
 def totaled_nested_data(nested_data, additive_identity):
