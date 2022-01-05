@@ -588,9 +588,11 @@ class Averager:
     def __add__(self, other: 'Averager'):
         return Averager(self.total + other.total, self.count + other.count)
 
-    def add(self, value, weight=1.0):
+    def add(self, value, weight=1.0, zeroW=False):
         if type(value) == str:
-            if value in 'ABCDF':
+            if value == 'W' and zeroW:
+                value = 0
+            elif value in 'ABCDF':
                 value = grade2points(value)
             else:
                 return None
@@ -907,3 +909,11 @@ class Tests(unittest.TestCase):
         self.assertEqual(counts, [[3, 1, 3], [3, 1, 3], [1, 0, 1]])
         averages = two_condition_averages(data, cond, lambda n: n, xs, bars)
         self.assertEqual(averages, [[12.0, 12.0, 12.0], [12.0, 12.0, 12.0], [18.0, None, 18.0]])
+
+    def test_averager(self):
+        for grades, gpa in [('ABCDF', 2.0), ('ABCCCDFW', 1.75)]:
+            averager = Averager()
+            for grade in grades:
+                averager.add(grade, zeroW=True)
+            self.assertEqual(averager.average(), gpa)
+
