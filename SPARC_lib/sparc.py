@@ -131,14 +131,15 @@ def sorted_conditional_plot(data, x_label, xs, post_label, prior, posterior, x_l
 
 
 def conditional_plot(data, x_label, xs, bar_label, bars, post_label, prior, posterior, colors=None,
-                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100,
+                     x_labeler=lambda x: str(x), bar_labeler=lambda bar: str(bar), y_labeler=lambda y: float(y),
+                     figsize=(10, 3), dpi=100,
                      legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0, min_all_bar=0, add_totals=True):
     """Creates bar chart and returns a markdown table of data from min_filtered_ratios()."""
     xs, bars, ratios = min_filtered_ratios(data, xs, bars, prior, posterior, min_any_x, min_all_x, min_any_bar,
                                            min_all_bar)
     x_labels = [x_labeler(x) for x in xs]
     bar_labels = [bar_labeler(bar) for bar in bars]
-    probs = [[float(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
+    probs = [[y_labeler(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
     grouped_bar_plot(probs, x_label, post_label, x_labels, bar_label, bar_labels, colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(ratios, x_label, post_label, x_labels, bar_label, bar_labels,
                                   Ratio(0, 0), add_totals=add_totals, convert=lambda r: r.percent())
@@ -150,6 +151,35 @@ def interval_ratio_plot(data, x_label, xs, x_getter, y_label, y_test, bar_label,
                             lambda n, x, bar: in_interval(x_getter(n, bar[0]), x) and in_interval(bar_getter(n), bar),
                             lambda n, x, bar: y_test(n, x[0], bar[0]),
                             colors, make_range_label, make_range_label, figsize, dpi, legend_loc)
+
+
+def line_plot(xs, y_lines, x_label, y_label, line_labels, colors=None, figsize=(10,3),
+             dpi=100, legend_loc='lower left'):
+    if colors is None:
+        colors = ['blue']
+    colors = InfiniteRepeatingList(colors)
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    for i, y_line in enumerate(y_lines):
+        plt.plot(xs, y_line, color=colors[i], label=line_labels[i], marker='o')
+    plt.xticks(ticks=xs)
+    plt.legend(loc=legend_loc)
+
+
+def conditional_line_plot(data, x_label, xs, line_label, lines, post_label, prior, posterior,
+                          x_labeler=lambda x: str(x), line_labeler=lambda line: str(line),
+                          y_labeler=lambda y: float(y), figsize=(10, 3), dpi=100,
+                          legend_loc='upper left', min_any_x=0, min_all_x=0, min_any_bar=0,
+                          min_all_bar=0, colors=None):
+    xs, lines, ratios = min_filtered_ratios(data, xs, lines, prior, posterior, min_any_x,
+                                            min_all_x, min_any_bar, min_all_bar)
+    x_labels = [x_labeler(x) for x in xs]
+    line_labels = [line_labeler(line) for line in lines]
+    probs = [[y_labeler(r) if r.defined() else 0.0 for r in rs] for rs in ratios]
+    line_plot(xs, probs, x_label, line_label, line_labels, colors=colors, figsize=figsize,
+              dpi=dpi, legend_loc=legend_loc)
 
 
 def zipped_sorted_averages(data, value_getter, labels_from, label_matcher):
