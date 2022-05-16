@@ -375,7 +375,7 @@ def grade2points(grade):
 
 
 def percent_str_from(num, denom):
-    return format(num * 100 / denom, ".2f") + "%" if denom != 0 else "Undefined"
+    return f"{int(num * 100 / denom)}%" if denom != 0 else "Undefined"
 
 
 @total_ordering
