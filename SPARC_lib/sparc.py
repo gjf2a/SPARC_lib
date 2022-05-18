@@ -394,7 +394,7 @@ def colorize_row(index, row_entries, colors2indices):
         result = []
         for color, indices in colors2indices.items():
             if index in indices:
-                return [f'<span style="color:{color}">{entry}</span>' for entry in row_entries]
+                return [f'<span style="background-color:{color}">{entry}</span>' for entry in row_entries]
     return row_entries
 
 
