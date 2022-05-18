@@ -49,10 +49,11 @@ def two_condition_counts(data, cond, xs, bars):
 
 
 def two_condition_plot(data, cond, x_label, xs, bar_label, bars, y_label, colors=None, x_labeler=lambda x: str(x),
-                       bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100, legend_loc="lower left"):
+                       bar_labeler=lambda bar: str(bar), figsize=(10, 3), dpi=100, legend_loc="lower left",
+                       count_transformer=lambda count: count):
     """cond() is a function of three arguments: a value from data, an x value, and a bar value.
     Each bar height represents the number of data elements for which cond(n, x, bar) is true."""
-    counts = two_condition_counts(data, cond, xs, bars)
+    counts = [count_transformer(c) for c in two_condition_counts(data, cond, xs, bars)]
     grouped_bar_plot(counts, x_label, y_label, [x_labeler(x) for x in xs], bar_label,
                      [bar_labeler(bar) for bar in bars], colors, figsize, dpi, legend_loc)
     return grouped_markdown_table(counts, x_label, y_label, xs, bar_label, bars, 0, add_totals=True,
