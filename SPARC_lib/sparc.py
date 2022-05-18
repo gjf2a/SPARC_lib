@@ -389,10 +389,20 @@ def in_interval(value, start, end=None):
         return value >= start and (end is None or end > value)
 
 
-def make_markdown_table(headers: List[str], data: List) -> str:
+def colorize_row(index, row_entries, colors2indices):
+    if colors2indices:
+        result = []
+        for color, indices in colors2indices.items():
+            if index in indices:
+                return [f'<span style="color:{color}">{entry}</span>' for entry in row_entries]
+    return row_entries
+
+
+def make_markdown_table(headers: List[str], data: List, colors2indices=None) -> str:
     s = f"| {' | '.join(headers)} |\n| {' | '.join([(max(1, len(header) - 1)) * '-' + ':' for header in headers])} |\n"
-    for row in data:
-        s += f"| {' | '.join([markdown_entry_for(item) for item in row])} |\n"
+    for i, row in enumerate(data):
+        entries = colorize_row(i, [markdown_entry_for(item) for item in row], colors2indices)
+        s += f"| {' | '.join(entries)} |\n"
     return s
 
 
