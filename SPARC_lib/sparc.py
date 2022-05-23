@@ -185,7 +185,8 @@ def conditional_line_plot(data, x_label, xs, line_label, lines, post_label, prio
               dpi=dpi, legend_loc=legend_loc)
 
 
-def make_box_plot(data, columns, column_cond, selector):
+def make_box_plot(data, columns, column_cond, selector, x_label, y_label,
+                  figsize=(10, 3), dpi=100):
     """data is a data sequence. Each element of columns represents one of the
     box plots. The column_cond is a function that takes a data element and a column
     identifier. It determines whether a data value belongs in a given column. The
@@ -194,6 +195,10 @@ def make_box_plot(data, columns, column_cond, selector):
     box_collections = []
     for col in columns:
         box_collections.append([selector(n) for n in data if column_cond(n, col)])
+    fig = plt.figure(figsize=figsize, dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
     plt.boxplot(box_collections, labels=columns, showmeans=True)
 
 
