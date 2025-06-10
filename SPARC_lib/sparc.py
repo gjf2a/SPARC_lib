@@ -435,7 +435,7 @@ def grade2points(grade):
 
 
 def percent_str_from(num, denom):
-    return f"{round(num * 100 / denom)}%" if denom != 0 else "Undefined"
+    return f"{(num * 100 / denom):.2f}%" if denom != 0 else "Undefined"
 
 
 @total_ordering
@@ -977,3 +977,7 @@ class Tests(unittest.TestCase):
                 averager.add(grade, zeroW=True)
             self.assertEqual(averager.average(), gpa)
 
+    def test_sub_ratio(self):
+        r1 = Ratio(244, 2784)
+        r2 = Ratio(108, 541)
+        self.assertEqual(Ratio(244 - 108, 2784 - 541), r1 - r2)
