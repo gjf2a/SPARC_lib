@@ -722,9 +722,12 @@ class Histogram:
         return f"Histogram({self.hist})"
 
     def bump(self, key):
+        self.bump_by(key, 1)
+
+    def bump_by(self, key, amount):
         if key not in self.hist:
             self.hist[key] = 0
-        self.hist[key] += 1
+        self.hist[key] += amount
 
     def count_for(self, key):
         return self.hist.get(key, 0)
